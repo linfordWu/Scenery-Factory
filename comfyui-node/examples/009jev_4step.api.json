@@ -1,0 +1,292 @@
+{
+  "119": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+    },
+    "_meta": {
+      "title": "Video VAE"
+    }
+  },
+  "120": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "Audio VAE"
+    }
+  },
+  "128": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "Text Encoder"
+    }
+  },
+  "127": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fused_refdelta_r1024_turbo8_mystic07_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "MATLOW Fused Turbo INT8 ConvRot"
+    }
+  },
+  "140": {
+    "class_type": "MiniMaxChunkFeedForward",
+    "inputs": {
+      "model": [
+        "127",
+        0
+      ],
+      "chunks": 4,
+      "seq_threshold": 4096
+    },
+    "_meta": {
+      "title": "MATLOW LowVRAM ChunkFFN 4"
+    }
+  },
+  "142": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "900",
+        0
+      ],
+      "shift_video": 12.0,
+      "shift_audio": 3.0
+    },
+    "_meta": {
+      "title": "Sigma Shift 12/3"
+    }
+  },
+  "901": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "jev_reference_01.png"
+    },
+    "_meta": {
+      "title": "Reference 1"
+    }
+  },
+  "902": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "jev_reference_02.png"
+    },
+    "_meta": {
+      "title": "Reference 2"
+    }
+  },
+  "903": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "jev_reference_03.png"
+    },
+    "_meta": {
+      "title": "Reference 3"
+    }
+  },
+  "131": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "128",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "audio_vae": [
+        "120",
+        0
+      ],
+      "prompt": "subject_definitions:\n<Picture 1> is a full-body reference of the same young anime-style woman.\n<Picture 2> is an upper-body reference of the same young anime-style woman.\n<Picture 3> is a face close-up reference of the same young anime-style woman.\n\n<Subject 1> is the exact same young anime-style woman consistently defined by <Picture 1>, <Picture 2>, and <Picture 3>, keeping her black updo, soft bangs, loose side strands, gray-violet eyes, fair skin, and slender proportions.\n\n<Subject 2> is a black cropped top with open shoulders, a slate-gray cargo mini skirt, and black ankle boots.\n\n<Subject 3> is a bright summer park with lush green trees, soft flower beds, a sunlit walking path, and a cheerful seasonal atmosphere.\n\nsummary:\n[reference generation] <Subject 1> gives a friendly greeting with a subtle head nod while speaking one simple English line.\n\nintegrated_multimodal_description:\nPolished 2D anime animation with clean line art, flat cel shading, natural summer daylight, warm sunlight, and neutral color balance. Avoid cyan lighting and avoid any blue color cast. Keep the image bright, fresh, and summery.\n\n[Shot 1]\nShow <Subject 1> wearing <Subject 2>, slightly right of center in a waist-up shot inside <Subject 3>.\nShe looks directly at the camera, smiles naturally, and gives a small friendly nod while speaking. Both arms remain relaxed down at her sides, with her hands below the camera framing throughout the shot. She does not raise her arms, reach toward the camera, wave, or gesture with her hands.\nThe camera performs a smooth steady push-in from waist-up framing to a closer upper-body framing.\nHer hair tips and clothing move gently in a light summer breeze.\n\nDuring the motion, she clearly says:\n<d>[English] Let's create something amazing!</d>\n\nHer mouth movement should synchronize naturally with the spoken sentence.\nPreserve her facial identity, hairstyle, body proportions, and outfit throughout the shot.\nKeep the background bright and stable.\n\noverall_soundscape:\nOnly the natural female voice of <Subject 1>, with faint summer park ambience such as a light breeze and distant birds.\n\nnon_diegetic_music:\nNone.",
+      "width": 1024,
+      "height": 1792,
+      "length": 124,
+      "ref_image_size": "match",
+      "ref_images.ref_image_0": [
+        "901",
+        0
+      ],
+      "ref_images.ref_image_1": [
+        "902",
+        0
+      ],
+      "ref_images.ref_image_2": [
+        "903",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMax H3 Reference to Video"
+    }
+  },
+  "129": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 2026
+    },
+    "_meta": {
+      "title": "Seed 42"
+    }
+  },
+  "135": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "res_multistep"
+    }
+  },
+  "124": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "142",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1.0
+    },
+    "_meta": {
+      "title": "simple / 4 steps"
+    }
+  },
+  "126": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "142",
+        0
+      ],
+      "conditioning": [
+        "131",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "125": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "129",
+        0
+      ],
+      "guider": [
+        "126",
+        0
+      ],
+      "sampler": [
+        "135",
+        0
+      ],
+      "sigmas": [
+        "124",
+        0
+      ],
+      "latent_image": [
+        "131",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Sampler"
+    }
+  },
+  "122": {
+    "class_type": "MiniMaxH3FastVAEDecode",
+    "inputs": {
+      "samples": [
+        "125",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "tile_batch_size": 2
+    },
+    "_meta": {
+      "title": "MiniMax H3 Fast VAE Decode (tile_batch_size=2)"
+    }
+  },
+  "121": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "125",
+        0
+      ],
+      "vae": [
+        "120",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Audio Decode"
+    }
+  },
+  "130": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "122",
+        0
+      ],
+      "audio": [
+        "121",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    },
+    "_meta": {
+      "title": "Create Video"
+    }
+  },
+  "92": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "130",
+        0
+      ],
+      "format": "auto",
+      "codec": "auto",
+      "filename_prefix": "009jev_4step"
+    },
+    "_meta": {
+      "title": "MATLOW Ref2VA Fused 4-step SLA LowVRAM"
+    }
+  },
+  "900": {
+    "class_type": "H3JevNativeSLAPatch",
+    "inputs": {
+      "model": [
+        "140",
+        0
+      ],
+      "sdk_python": "",
+      "initial_policy": "jev_first",
+      "initial_context": "{\"historical_source\":\"Recorded 5%-first park pilot, seed43 and reaching-hand action. Current example seed2026, hands down. Historical prior only.\",\"historical_blocks\":{\"0\":{\"audio\":{\"residual_relative_l2\":0.401589,\"rank\":0.7,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":1.978285,\"rank\":0.98,\"cross_step_change\":null}},\"1\":{\"audio\":{\"residual_relative_l2\":0.614136,\"rank\":0.84,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":11.095734,\"rank\":1.0,\"cross_step_change\":null}},\"2\":{\"audio\":{\"residual_relative_l2\":2.305021,\"rank\":0.98,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.437673,\"rank\":0.46,\"cross_step_change\":null}},\"3\":{\"audio\":{\"residual_relative_l2\":0.123981,\"rank\":0.52,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.353477,\"rank\":0.36,\"cross_step_change\":null}},\"4\":{\"audio\":{\"residual_relative_l2\":0.279792,\"rank\":0.58,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.157856,\"rank\":0.06,\"cross_step_change\":null}},\"5\":{\"audio\":{\"residual_relative_l2\":74.17791,\"rank\":1.0,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.165595,\"rank\":0.08,\"cross_step_change\":null}},\"6\":{\"audio\":{\"residual_relative_l2\":0.006355,\"rank\":0.04,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.149602,\"rank\":0.04,\"cross_step_change\":null}},\"7\":{\"audio\":{\"residual_relative_l2\":0.006054,\"rank\":0.02,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.184842,\"rank\":0.16,\"cross_step_change\":null}},\"8\":{\"audio\":{\"residual_relative_l2\":0.00854,\"rank\":0.1,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.265064,\"rank\":0.28,\"cross_step_change\":null}},\"9\":{\"audio\":{\"residual_relative_l2\":0.012892,\"rank\":0.14,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.182903,\"rank\":0.14,\"cross_step_change\":null}},\"10\":{\"audio\":{\"residual_relative_l2\":0.00773,\"rank\":0.06,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.1414,\"rank\":0.02,\"cross_step_change\":null}},\"11\":{\"audio\":{\"residual_relative_l2\":0.015597,\"rank\":0.18,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.202895,\"rank\":0.18,\"cross_step_change\":null}},\"12\":{\"audio\":{\"residual_relative_l2\":0.008752,\"rank\":0.12,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.212748,\"rank\":0.2,\"cross_step_change\":null}},\"13\":{\"audio\":{\"residual_relative_l2\":0.008114,\"rank\":0.08,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.170716,\"rank\":0.1,\"cross_step_change\":null}},\"14\":{\"audio\":{\"residual_relative_l2\":0.017588,\"rank\":0.2,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.181559,\"rank\":0.12,\"cross_step_change\":null}},\"15\":{\"audio\":{\"residual_relative_l2\":0.018685,\"rank\":0.24,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.238772,\"rank\":0.26,\"cross_step_change\":null}},\"16\":{\"audio\":{\"residual_relative_l2\":0.02016,\"rank\":0.26,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.21406,\"rank\":0.22,\"cross_step_change\":null}},\"17\":{\"audio\":{\"residual_relative_l2\":0.022149,\"rank\":0.28,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.28938,\"rank\":0.3,\"cross_step_change\":null}},\"18\":{\"audio\":{\"residual_relative_l2\":0.066049,\"rank\":0.44,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.408343,\"rank\":0.4,\"cross_step_change\":null}},\"19\":{\"audio\":{\"residual_relative_l2\":0.055805,\"rank\":0.42,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.394911,\"rank\":0.38,\"cross_step_change\":null}},\"20\":{\"audio\":{\"residual_relative_l2\":0.08991,\"rank\":0.46,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.22658,\"rank\":0.24,\"cross_step_change\":null}},\"21\":{\"audio\":{\"residual_relative_l2\":0.017705,\"rank\":0.22,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.293756,\"rank\":0.32,\"cross_step_change\":null}},\"22\":{\"audio\":{\"residual_relative_l2\":0.013623,\"rank\":0.16,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.338747,\"rank\":0.34,\"cross_step_change\":null}},\"23\":{\"audio\":{\"residual_relative_l2\":0.027774,\"rank\":0.32,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.42258,\"rank\":0.42,\"cross_step_change\":null}},\"24\":{\"audio\":{\"residual_relative_l2\":0.035392,\"rank\":0.36,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.433918,\"rank\":0.44,\"cross_step_change\":null}},\"25\":{\"audio\":{\"residual_relative_l2\":0.024262,\"rank\":0.3,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.586268,\"rank\":0.5,\"cross_step_change\":null}},\"26\":{\"audio\":{\"residual_relative_l2\":0.030101,\"rank\":0.34,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.577326,\"rank\":0.48,\"cross_step_change\":null}},\"27\":{\"audio\":{\"residual_relative_l2\":0.036628,\"rank\":0.38,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.811986,\"rank\":0.84,\"cross_step_change\":null}},\"28\":{\"audio\":{\"residual_relative_l2\":0.044451,\"rank\":0.4,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.695479,\"rank\":0.74,\"cross_step_change\":null}},\"29\":{\"audio\":{\"residual_relative_l2\":0.11021,\"rank\":0.5,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.85595,\"rank\":0.92,\"cross_step_change\":null}},\"30\":{\"audio\":{\"residual_relative_l2\":0.102207,\"rank\":0.48,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.695102,\"rank\":0.72,\"cross_step_change\":null}},\"31\":{\"audio\":{\"residual_relative_l2\":0.167136,\"rank\":0.54,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.77308,\"rank\":0.8,\"cross_step_change\":null}},\"32\":{\"audio\":{\"residual_relative_l2\":0.279819,\"rank\":0.6,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.790823,\"rank\":0.82,\"cross_step_change\":null}},\"33\":{\"audio\":{\"residual_relative_l2\":0.30045,\"rank\":0.62,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.683342,\"rank\":0.68,\"cross_step_change\":null}},\"34\":{\"audio\":{\"residual_relative_l2\":0.264185,\"rank\":0.56,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.689531,\"rank\":0.7,\"cross_step_change\":null}},\"35\":{\"audio\":{\"residual_relative_l2\":0.361663,\"rank\":0.66,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.651889,\"rank\":0.64,\"cross_step_change\":null}},\"36\":{\"audio\":{\"residual_relative_l2\":0.400018,\"rank\":0.68,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.612843,\"rank\":0.54,\"cross_step_change\":null}},\"37\":{\"audio\":{\"residual_relative_l2\":0.329749,\"rank\":0.64,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.623542,\"rank\":0.56,\"cross_step_change\":null}},\"38\":{\"audio\":{\"residual_relative_l2\":0.558047,\"rank\":0.76,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.626522,\"rank\":0.58,\"cross_step_change\":null}},\"39\":{\"audio\":{\"residual_relative_l2\":0.581884,\"rank\":0.78,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.628479,\"rank\":0.6,\"cross_step_change\":null}},\"40\":{\"audio\":{\"residual_relative_l2\":0.61414,\"rank\":0.86,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.588433,\"rank\":0.52,\"cross_step_change\":null}},\"41\":{\"audio\":{\"residual_relative_l2\":0.663515,\"rank\":0.9,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.645224,\"rank\":0.62,\"cross_step_change\":null}},\"42\":{\"audio\":{\"residual_relative_l2\":0.624835,\"rank\":0.88,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.666976,\"rank\":0.66,\"cross_step_change\":null}},\"43\":{\"audio\":{\"residual_relative_l2\":0.417634,\"rank\":0.72,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.8442,\"rank\":0.88,\"cross_step_change\":null}},\"44\":{\"audio\":{\"residual_relative_l2\":0.484346,\"rank\":0.74,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.830707,\"rank\":0.86,\"cross_step_change\":null}},\"45\":{\"audio\":{\"residual_relative_l2\":0.592726,\"rank\":0.8,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.84741,\"rank\":0.9,\"cross_step_change\":null}},\"46\":{\"audio\":{\"residual_relative_l2\":0.598849,\"rank\":0.82,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.755572,\"rank\":0.76,\"cross_step_change\":null}},\"47\":{\"audio\":{\"residual_relative_l2\":0.665884,\"rank\":0.92,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":0.772557,\"rank\":0.78,\"cross_step_change\":null}},\"48\":{\"audio\":{\"residual_relative_l2\":0.98778,\"rank\":0.94,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":1.055062,\"rank\":0.94,\"cross_step_change\":null}},\"49\":{\"audio\":{\"residual_relative_l2\":1.31609,\"rank\":0.96,\"cross_step_change\":null},\"video\":{\"residual_relative_l2\":1.273195,\"rank\":0.96,\"cross_step_change\":null}}},\"limitations\":\"Historical data, not this run. Residuals are uncalibrated importance proxies, not sparse-error or perceptual labels. No additional probe forward.\",\"human_feedback\":\"Prior reaching-hand generations had extra fingers. Current prompt keeps hands down/out of frame. Preserve identity, outfit, park, spoken line and head nod.\"}",
+      "prompt_context": "subject_definitions:\n<Picture 1> is a full-body reference of the same young anime-style woman.\n<Picture 2> is an upper-body reference of the same young anime-style woman.\n<Picture 3> is a face close-up reference of the same young anime-style woman.\n\n<Subject 1> is the exact same young anime-style woman consistently defined by <Picture 1>, <Picture 2>, and <Picture 3>, keeping her black updo, soft bangs, loose side strands, gray-violet eyes, fair skin, and slender proportions.\n\n<Subject 2> is a black cropped top with open shoulders, a slate-gray cargo mini skirt, and black ankle boots.\n\n<Subject 3> is a bright summer park with lush green trees, soft flower beds, a sunlit walking path, and a cheerful seasonal atmosphere.\n\nsummary:\n[reference generation] <Subject 1> gives a friendly greeting with a subtle head nod while speaking one simple English line.\n\nintegrated_multimodal_description:\nPolished 2D anime animation with clean line art, flat cel shading, natural summer daylight, warm sunlight, and neutral color balance. Avoid cyan lighting and avoid any blue color cast. Keep the image bright, fresh, and summery.\n\n[Shot 1]\nShow <Subject 1> wearing <Subject 2>, slightly right of center in a waist-up shot inside <Subject 3>.\nShe looks directly at the camera, smiles naturally, and gives a small friendly nod while speaking. Both arms remain relaxed down at her sides, with her hands below the camera framing throughout the shot. She does not raise her arms, reach toward the camera, wave, or gesture with her hands.\nThe camera performs a smooth steady push-in from waist-up framing to a closer upper-body framing.\nHer hair tips and clothing move gently in a light summer breeze.\n\nDuring the motion, she clearly says:\n<d>[English] Let's create something amazing!</d>\n\nHer mouth movement should synchronize naturally with the spoken sentence.\nPreserve her facial identity, hairstyle, body proportions, and outfit throughout the shot.\nKeep the background bright and stable.\n\noverall_soundscape:\nOnly the natural female voice of <Subject 1>, with faint summer park ambience such as a light breeze and distant birds.\n\nnon_diegetic_music:\nNone."
+    },
+    "_meta": {
+      "title": "009jev: Jev-guided Native SLA"
+    }
+  }
+}

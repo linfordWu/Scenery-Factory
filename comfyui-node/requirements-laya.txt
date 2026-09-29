@@ -1,0 +1,5 @@
+# Local decision engine (default). Install into ComfyUI's Python environment.
+laya>=0.3.5
+# Weights are separate: download convaiinnovations/laya from Hugging Face or
+# ModelScope (https://www.modelscope.cn/models/convaiinnovations/laya) and point
+# LAYA_MODEL_DIR at the bundle directory. See LAYA.md.

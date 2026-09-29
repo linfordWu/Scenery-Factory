@@ -1,0 +1,2 @@
+# Install only in a dedicated SDK environment; optional in fixed mode.
+typesafe-sdk==0.7.0

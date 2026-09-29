@@ -1,0 +1,4 @@
+# 开发/验证依赖（运行服务本身只需要 requirements.txt）
+-r requirements.txt
+pytest>=8.0
+httpx>=0.27

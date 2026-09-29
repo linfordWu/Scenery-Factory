@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 148 148" role="img" aria-label="境界">
+<title>境界 · 本地部署的数字媒体资产平台</title>
+<defs>
+<linearGradient id="jjg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#22D3EE"/>
+<stop offset=".55" stop-color="#6366F1"/>
+<stop offset="1" stop-color="#A855F7"/>
+</linearGradient>
+<linearGradient id="jjg2" x1="0" y1="1" x2="1" y2="0">
+<stop offset="0" stop-color="#0EA5E9"/>
+<stop offset="1" stop-color="#A855F7"/>
+</linearGradient>
+</defs>
+<rect x="-10" y="-10" width="148" height="148" rx="34" fill="#FFFFFF"/>
+<g fill="none" stroke="url(#jjg)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+<path d="M22 46 L22 30 Q22 22 30 22 L46 22"/>
+<path d="M82 22 L98 22 Q106 22 106 30 L106 46"/>
+<path d="M106 82 L106 98 Q106 106 98 106 L82 106"/>
+<path d="M46 106 L30 106 Q22 106 22 98 L22 82"/>
+</g>
+<circle cx="64" cy="64" r="14" fill="url(#jjg)"/>
+<path d="M36 84 H92" stroke="url(#jjg2)" stroke-width="9" stroke-linecap="round"/>
+</svg>

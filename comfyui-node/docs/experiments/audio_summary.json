@@ -1,0 +1,82 @@
+{
+  "method": {
+    "sample_rate": 32000,
+    "activity": "25 ms RMS, 10 ms hop; threshold p95 RMS minus 25 dB; energy gate, not phonetic VAD",
+    "normalization": "each clip mono active RMS = 1; original PCM unchanged",
+    "wavelet": "Morlet omega0=6; 64 log frequencies 150-10000Hz; +/-4 sigma; unit L2; sample 5ms",
+    "envelope": "Butterworth order4 zero-phase bandpass; Hilbert magnitude; 100Hz lowpass; 200Hz envelope sampling",
+    "spectrum": "Hann 64ms/10ms hop/4096 FFT; mean PSD over energy-active frames",
+    "limitations": "Different utterances/timing/pitch; no clean reference or impulse response; no RT60/MOS/causal quality verdict"
+  },
+  "checks": {
+    "morlet_1000hz_peak_hz": 969.8785759851801,
+    "hilbert_am_max_absolute_error": 1.2236878177418475e-12
+  },
+  "versions": {
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2"
+  },
+  "rows": [
+    {
+      "run": "fixed_5",
+      "band_energy_percent": {
+        "80-250": 8.002098963940037,
+        "250-500": 52.64353125631758,
+        "500-1000": 28.344501377435417,
+        "1000-2000": 3.248452200830427,
+        "2000-4000": 6.0957702517159404,
+        "4000-8000": 1.0338873636318926,
+        "8000-12000": 0.6317585861286918
+      },
+      "spectral_centroid_80_12000_hz": 744.9180212649293,
+      "median_frame_flatness_300_8000_db": -28.728202358155848,
+      "active_end_seconds": 4.4625
+    },
+    {
+      "run": "fixed_1",
+      "band_energy_percent": {
+        "80-250": 11.618013311677556,
+        "250-500": 40.63066510976297,
+        "500-1000": 36.600358525784635,
+        "1000-2000": 3.563250104360586,
+        "2000-4000": 4.61399354332664,
+        "4000-8000": 2.0324262227168997,
+        "8000-12000": 0.941293182370735
+      },
+      "spectral_centroid_80_12000_hz": 803.0991137171407,
+      "median_frame_flatness_300_8000_db": -30.127917391892435,
+      "active_end_seconds": 4.9725
+    },
+    {
+      "run": "run16",
+      "band_energy_percent": {
+        "80-250": 5.513545132611643,
+        "250-500": 48.1174531510892,
+        "500-1000": 31.596262749789933,
+        "1000-2000": 4.437775241338137,
+        "2000-4000": 8.533297694147075,
+        "4000-8000": 1.0903967514560464,
+        "8000-12000": 0.7112692795679771
+      },
+      "spectral_centroid_80_12000_hz": 842.0259516654069,
+      "median_frame_flatness_300_8000_db": -26.30704791731673,
+      "active_end_seconds": 4.4525
+    },
+    {
+      "run": "run18",
+      "band_energy_percent": {
+        "80-250": 10.296210730328342,
+        "250-500": 49.7394985115954,
+        "500-1000": 28.751900160328393,
+        "1000-2000": 3.772321874267706,
+        "2000-4000": 5.722727452430167,
+        "4000-8000": 1.0147402151275797,
+        "8000-12000": 0.7026010559224449
+      },
+      "spectral_centroid_80_12000_hz": 725.5865700654784,
+      "median_frame_flatness_300_8000_db": -26.95931997203435,
+      "active_end_seconds": 4.4525
+    }
+  ]
+}

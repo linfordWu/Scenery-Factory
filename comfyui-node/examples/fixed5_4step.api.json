@@ -1,0 +1,304 @@
+{
+  "119": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+    },
+    "_meta": {
+      "title": "Video VAE"
+    }
+  },
+  "120": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "_meta": {
+      "title": "Audio VAE"
+    }
+  },
+  "128": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "_meta": {
+      "title": "Text Encoder"
+    }
+  },
+  "127": {
+    "class_type": "H3V2PreconvertedLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fused_refdelta_r1024_turbo8_mystic07_int8_convrot.safetensors",
+      "cache_directory": "h3_preconverted/fc1_gate"
+    },
+    "_meta": {
+      "title": "H3 v2 Preconverted FC1 Loader"
+    }
+  },
+  "140": {
+    "class_type": "MiniMaxChunkFeedForward",
+    "inputs": {
+      "model": [
+        "127",
+        0
+      ],
+      "chunks": 4,
+      "seq_threshold": 4096
+    },
+    "_meta": {
+      "title": "MATLOW LowVRAM ChunkFFN 4"
+    }
+  },
+  "900": {
+    "class_type": "H3V2JevAdaptiveVSAPatch",
+    "inputs": {
+      "model": [
+        "140",
+        0
+      ],
+      "cache": [
+        "127",
+        1
+      ],
+      "keep_percent": 5,
+      "start_percent": 0.0,
+      "end_percent": 1.0,
+      "min_tokens": 12288,
+      "verbose": true,
+      "mode": "fixed",
+      "sdk_python": "",
+      "api_timeout": 20,
+      "min_confidence": 0.4,
+      "max_requests": 3,
+      "policy": "layer_v5",
+      "producer_chunk": 4096
+    },
+    "_meta": {
+      "title": "Jev layer_v5 / four steps / no block skipping"
+    }
+  },
+  "142": {
+    "class_type": "MiniMaxH3SigmaShift",
+    "inputs": {
+      "model": [
+        "900",
+        0
+      ],
+      "shift_video": 12.0,
+      "shift_audio": 3.0
+    },
+    "_meta": {
+      "title": "Sigma Shift 12/3"
+    }
+  },
+  "901": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "jev_reference_01.png"
+    },
+    "_meta": {
+      "title": "Reference 1"
+    }
+  },
+  "902": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "jev_reference_02.png"
+    },
+    "_meta": {
+      "title": "Reference 2"
+    }
+  },
+  "903": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "jev_reference_03.png"
+    },
+    "_meta": {
+      "title": "Reference 3"
+    }
+  },
+  "131": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "clip": [
+        "128",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "audio_vae": [
+        "120",
+        0
+      ],
+      "prompt": "subject_definitions:\n<Picture 1> is a full-body reference of the same young anime-style woman.\n<Picture 2> is an upper-body reference of the same young anime-style woman.\n<Picture 3> is a face close-up reference of the same young anime-style woman.\n\n<Subject 1> is the exact same young anime-style woman consistently defined by <Picture 1>, <Picture 2>, and <Picture 3>, keeping her black updo, soft bangs, loose side strands, gray-violet eyes, fair skin, and slender proportions.\n\n<Subject 2> is a black cropped top with open shoulders, slate-gray cargo mini skirt, and black ankle boots.\n\nsummary:\n[reference generation] <Subject 1> performs a short energetic motion while speaking one simple English line.\n\nintegrated_multimodal_description:\nPolished 2D anime animation with clean line art, flat cel shading, and soft cyan studio lighting.\n\n[Shot 1]\nShow <Subject 1> wearing <Subject 2>, slightly right of center in a waist-up shot.\nShe looks directly at the camera, smiles naturally, raises one hand, and makes a small reaching gesture toward the viewer.\nThe camera performs a smooth steady push-in from waist-up framing to a closer upper-body framing.\n\nDuring the motion, she clearly says:\n<d>[English] Let's create something amazing!</d>\n\nHer mouth movement should synchronize naturally with the spoken sentence.\nPreserve her facial identity, hairstyle, body proportions, and outfit throughout the shot.\nKeep the background simple and stable.\n\noverall_soundscape:\nOnly the natural female voice of <Subject 1>. No background music, no sound effects, no crowd noise.\n\nnon_diegetic_music:\nNone.",
+      "width": 1024,
+      "height": 1792,
+      "length": 124,
+      "ref_image_size": "match",
+      "ref_images.ref_image_0": [
+        "901",
+        0
+      ],
+      "ref_images.ref_image_1": [
+        "902",
+        0
+      ],
+      "ref_images.ref_image_2": [
+        "903",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "MiniMax H3 Reference to Video"
+    }
+  },
+  "129": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 43
+    },
+    "_meta": {
+      "title": "Seed 43"
+    }
+  },
+  "135": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "_meta": {
+      "title": "res_multistep"
+    }
+  },
+  "124": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "142",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 4,
+      "denoise": 1.0
+    },
+    "_meta": {
+      "title": "simple / 4 steps"
+    }
+  },
+  "126": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "142",
+        0
+      ],
+      "conditioning": [
+        "131",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "125": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "129",
+        0
+      ],
+      "guider": [
+        "126",
+        0
+      ],
+      "sampler": [
+        "135",
+        0
+      ],
+      "sigmas": [
+        "124",
+        0
+      ],
+      "latent_image": [
+        "131",
+        1
+      ]
+    },
+    "_meta": {
+      "title": "Sampler"
+    }
+  },
+  "122": {
+    "class_type": "MiniMaxH3FastVAEDecode",
+    "inputs": {
+      "samples": [
+        "125",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "tile_batch_size": 2
+    },
+    "_meta": {
+      "title": "MiniMax H3 Fast VAE Decode (tile_batch_size=2)"
+    }
+  },
+  "121": {
+    "class_type": "VAEDecodeAudio",
+    "inputs": {
+      "samples": [
+        "125",
+        0
+      ],
+      "vae": [
+        "120",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Audio Decode"
+    }
+  },
+  "130": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "122",
+        0
+      ],
+      "audio": [
+        "121",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    },
+    "_meta": {
+      "title": "Create Video"
+    }
+  },
+  "92": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "130",
+        0
+      ],
+      "format": "mp4",
+      "codec": "h264",
+      "filename_prefix": "jev_example_fixed"
+    },
+    "_meta": {
+      "title": "016 FC1 W4A4 + Streaming VSA 5%"
+    }
+  }
+}

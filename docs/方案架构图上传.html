@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>短视频工厂agent</title>
+<style>
+:root{--bg:#f3f5f8;--paper:#fff;--ink:#18263b;--muted:#56677f;--line:#d6deea;--blue:#285bce;--tint:#edf3ff;--green:#08705d;--purple:#7349c4;--orange:#995112}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}button,input{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}a{color:var(--blue);text-underline-offset:4px}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #dc9100;outline-offset:4px}header{background:#142941;color:#fff;padding:30px 4vw 28px}.eyebrow{font-size:12px;font-weight:700;letter-spacing:2px;color:#9bc3f7}h1{font-size:34px;margin:6px 0;font-weight:750;letter-spacing:-1px}header p{margin:0;color:#c6d7ee;max-width:950px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{border:1px solid #52667e;border-radius:6px;padding:3px 10px;font-size:13px}.layout{display:grid;grid-template-columns:200px minmax(0,1fr);max-width:1920px;margin:auto}.nav{padding:30px 16px;align-self:start;position:sticky;top:0;max-height:100vh;overflow:auto}.nav small{display:block;color:var(--muted);padding:8px 12px}.nav a{display:block;padding:10px 12px;text-decoration:none;color:var(--ink);font-size:14px;border-radius:7px}.nav a:hover{background:#e2eafb;color:var(--blue)}main{padding:28px 32px 80px;min-width:0}section{margin:0 0 36px;scroll-margin-top:25px}.section-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}.section-num{color:var(--blue);font:600 14px ui-monospace,monospace}h2{font-size:24px;margin:0}h3{font-size:18px;margin:0 0 8px}p{margin:8px 0 14px}.muted{color:var(--muted)}.intro{max-width:1020px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:var(--paper);border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0}.toolbar strong{margin-right:auto;font-size:14px}.toolbar button{height:44px;min-width:44px;padding:0 12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px}.toolbar output{min-width:48px;text-align:center;font-variant-numeric:tabular-nums}.map-scroll{height:650px;max-height:72vh;min-height:340px;overflow:scroll;scrollbar-gutter:stable;background:#f8faff;background-image:radial-gradient(#d8e0ec 1px,transparent 1px);background-size:20px 20px;border:1px solid #acbbcf;overscroll-behavior-x:contain;scrollbar-width:auto;scrollbar-color:#6b7f9e #e6ebf3}.map-scroll::-webkit-scrollbar{width:15px;height:15px}.map-scroll::-webkit-scrollbar-thumb{background:#7186a6;border:3px solid #e6ebf3;border-radius:10px}.map-scroll::-webkit-scrollbar-track{background:#e6ebf3}.map-size{width:1660px;height:1190px;position:relative}.map{width:1660px;height:1190px;position:absolute;left:0;top:0;transform-origin:0 0}.map svg{position:absolute;inset:0;width:1660px;height:1190px;pointer-events:none}.lane-label{position:absolute;left:40px;font-size:14px;font-weight:750;color:#50617b;letter-spacing:1px}.node{position:absolute;width:332px;height:210px;padding:19px 20px;text-align:left;background:#fff;border:1px solid #c4d0e2;border-top:4px solid var(--blue);border-radius:10px;color:var(--ink);box-shadow:0 4px 12px #1e355109;display:flex;flex-direction:column;gap:8px;line-height:1.55}.node:hover,.node[aria-pressed="true"]{outline:3px solid #84acf0;outline-offset:2px}.node .meta{font-size:12px;letter-spacing:.4px;font-weight:750;color:var(--blue)}.node strong{font-size:20px;line-height:1.4}.node .desc{font-size:15px;color:var(--muted)}.node .out{font-size:13px;background:var(--tint);border-radius:5px;padding:5px 8px;margin-top:auto}.node.model{border-top-color:var(--purple)}.node.quality{border-top-color:var(--orange)}.node.output{border-top-color:var(--green)}.data-strip{position:absolute;left:40px;top:1090px;width:1550px;border:1px dashed #9aaec8;background:#eef3f9;padding:17px 22px;border-radius:8px;font-size:16px}.scroll-control{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-top:0;padding:10px 16px;border-radius:0 0 10px 10px;font-size:13px;color:var(--muted)}.scroll-control label{display:flex;gap:12px;align-items:center;flex:1;min-width:200px}.scroll-control input{min-width:120px;flex:1;accent-color:var(--blue);height:30px}.detail{margin-top:16px;border-left:4px solid var(--blue)}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.detail-grid ul{margin:0;padding-left:20px}.tag{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.note{background:#fff5e6;border-left:3px solid #b47b25;padding:12px 16px;color:#715018;font-size:14px;margin:16px 0}.table-scroll{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:14px;min-width:800px}th,td{text-align:left;vertical-align:top;padding:14px 16px;border-bottom:1px solid var(--line)}th{background:#edf2f9;font-weight:750;white-space:nowrap}tr:last-child td{border-bottom:0}code{font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;background:#edf2f9;padding:2px 5px;border-radius:4px;color:#284675;overflow-wrap:anywhere}pre{margin:12px 0 0;padding:20px;background:#172b43;color:#e0ecfa;overflow:auto;border-radius:8px;font:13px/1.85 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}pre code{background:none;color:inherit;padding:0;overflow-wrap:normal}.steps{display:grid;gap:14px}.step{display:grid;grid-template-columns:48px 1fr;gap:16px;background:#fff;padding:22px;border:1px solid var(--line);border-radius:10px}.step-num{display:grid;place-items:center;width:44px;height:44px;background:var(--tint);color:var(--blue);font-weight:750;border-radius:10px}.step p{margin:4px 0 10px}.accept{color:var(--green);font-size:14px}.state{background:#eaf2ff;border:1px solid #c6d7f5;padding:18px 20px;border-radius:8px;font-family:ui-monospace,monospace;line-height:2;overflow-wrap:anywhere}.small{font-size:13px}footer{color:var(--muted);border-top:1px solid var(--line);padding-top:18px;font-size:13px}details{padding:16px 0;border-bottom:1px solid var(--line)}summary{cursor:pointer;min-height:44px;font-weight:700}ul,ol{padding-left:22px}
+@media(max-width:1100px){.layout{grid-template-columns:160px minmax(0,1fr)}main{padding:24px 18px}.grid3{grid-template-columns:1fr}.detail-grid,.grid2{grid-template-columns:1fr}}
+@media(max-width:700px){h1{font-size:28px}header{padding:24px 18px}.layout{display:block}.nav{position:static;display:flex;overflow:auto;padding:10px 12px;white-space:nowrap;gap:3px}.nav small{display:none}.nav a{font-size:13px;padding:8px 10px}main{padding:16px 12px 50px}h2{font-size:21px}.panel{padding:16px}.map-scroll{height:540px;max-height:65vh}.step{padding:16px;grid-template-columns:34px 1fr}.step-num{width:32px;height:36px}.toolbar strong{width:100%}}
+@media print{.nav,.toolbar,.scroll-control{display:none}.layout{display:block}main{padding:0}.map-scroll{height:auto;max-height:none;overflow:visible}.map-size{zoom:.55}.panel,.step{break-inside:avoid}header{background:white;color:black}.chips,header p{color:black}.table-scroll{overflow:visible}}
+
+/* Revision 3: layered architecture with native scrolling */
+header{position:relative;background:radial-gradient(ellipse at 95% 0%,#235b68 0,transparent 48%),linear-gradient(120deg,#12253d,#162f48);padding:34px 4vw 32px;border-bottom:4px solid #78bea9}
+h1{font-size:38px;letter-spacing:-1.2px}.eyebrow{color:#a4d7cc}.chip{background:#ffffff09;border-color:#ffffff28;border-radius:20px;padding:4px 12px}.layout{grid-template-columns:218px minmax(0,1fr)}.nav a{padding:9px 12px}.nav{border-right:1px solid #e0e6ee}.nav a.active{background:#e5eefc;color:#2456a2;font-weight:700}main{padding:30px 30px 80px}.section-head{margin-bottom:12px}section{margin-bottom:44px}.section-num{font-size:12px;letter-spacing:.8px}.panel{border-radius:12px;box-shadow:0 2px 7px #16294004}
+.toolbar{border-radius:14px 14px 0 0;padding:12px 16px;box-shadow:0 -3px 20px #1a345304}.toolbar strong{font-size:13px}.toolbar button{font-size:13px}.toolbar #decision-jump{background:#fff4df;color:#925c1e;border-color:#e7cfab}
+.map-scroll{background:#fafbfd;background-image:none;border-color:#cbd7e6;height:700px;max-height:76vh}
+.map-size,.map{width:1770px;height:1940px}.map svg{width:1770px;height:1940px}
+.lane{position:absolute;left:30px;width:1700px;border:1px solid;border-radius:20px;pointer-events:none}.lane-heading{position:absolute;left:24px;top:30px;width:148px;color:var(--lane-ink)}.lane-index{display:block;font:600 28px ui-monospace,monospace;opacity:.65;margin-bottom:15px}.lane-heading small{font-size:10px;letter-spacing:1px;font-weight:750;display:block;margin-bottom:8px}.lane-heading strong{font-size:22px;display:block;letter-spacing:-.5px}.lane-heading p{font-size:13px;line-height:1.8;margin-top:12px;opacity:.9}
+.node{width:320px;height:210px;border:1px solid #d9e1ed;border-radius:14px;padding:17px 18px;box-shadow:0 5px 16px #1e355108;gap:8px;border-top:3px solid var(--node-color,#6486b4)}.node .meta{font-size:11px;letter-spacing:.3px;color:var(--node-color,#6486b4)}.node strong{font-size:19px;letter-spacing:-.35px}.node .desc{font-size:14px;line-height:1.65}.node .out{font-size:12px;background:#f3f6fa;border:1px solid #ebeff5;padding:5px 7px;line-height:1.5}.node.web{--node-color:#3674c6}.node.control{--node-color:#666eaa}.node.create{--node-color:#8756b6}.node.execute{--node-color:#218b73}.node.deliver{--node-color:#b78638}.node.decision{--node-color:#a7661a;background:linear-gradient(135deg,#fff,#fff8e8);border-color:#ddc393}.node:hover,.node[aria-pressed="true"]{outline:2px solid var(--node-color,#3674c6);outline-offset:3px;box-shadow:0 7px 22px #17305213}.edge-label{font:600 13px system-ui,sans-serif;fill:#5b6f91;paint-order:stroke;stroke:#fafbfd;stroke-width:5px;stroke-linejoin:round}.support-title{position:absolute;left:40px;top:1750px;font-size:12px;font-weight:750;letter-spacing:1px;color:#67788d}.support-title span{font-weight:500;letter-spacing:0;margin-left:20px}.foundation{position:absolute;left:40px;top:1788px;right:40px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.foundation>div{padding:23px 18px;border:1px solid #d6deeb;border-radius:12px;background:#edf2f8}.foundation b{display:block;font-size:17px;color:#314e6e}.foundation span{display:block;font-size:12px;color:#61728a;margin-top:7px}
+.flow-legend{display:flex;gap:20px;flex-wrap:wrap;margin:10px 2px;color:#66768c;font-size:12px}.flow-legend i{display:inline-block;width:22px;border-top:2px solid #60769c;vertical-align:middle;margin-right:7px}.flow-legend .dashed{border-top-style:dashed}.flow-legend .green{border-color:#278c74}.flow-legend .orange{border-color:#af792c}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;line-height:1.6;font-weight:700;background:#eaf0fa;color:#365a8a}.badge.green{background:#e4f4ed;color:#237657}.badge.amber{background:#fff0d9;color:#975e17}.review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.review-card{padding:20px;border:1px solid var(--line);background:#fff;border-radius:12px}.review-card b{display:block;margin:8px 0}.review-card p{font-size:14px;color:var(--muted);margin-bottom:0}
+.console{border:1px solid #cbd9e8;border-radius:15px;overflow:hidden;background:white;box-shadow:0 10px 30px #17335409}.console-bar{background:#172c46;color:#e9f1ff;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:12px}.console-bar strong{margin-right:auto}.console-bar .badge{background:#ffffff14;color:#aee4d1}.console-body{display:grid;grid-template-columns:220px minmax(0,1fr)}.task-list{border-right:1px solid #e0e7f0;background:#f6f9fd;padding:14px}.task-list button{display:block;text-align:left;width:100%;padding:14px 12px;border:1px solid transparent;background:transparent;border-radius:10px;line-height:1.6;color:var(--ink);margin:0 0 8px}.task-list button.active{background:white;border-color:#a8c1e5;box-shadow:0 3px 8px #1a355009}.task-list small{display:block;font-size:12px;color:#65738c;margin-top:5px}.console-main{padding:22px;min-width:0}.console-title{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}.console-title h3{margin:0}.demo-actions{display:flex;gap:8px;flex-wrap:wrap}.demo-actions button{min-height:44px;padding:8px 12px;border:1px solid #d2deed;border-radius:7px;background:#f4f7fc;color:#234d87;font-size:13px}.demo-actions button:disabled{opacity:.5;cursor:default}.demo-label{font-size:12px;color:#947038;margin-top:8px}.phase-list{display:grid;grid-template-columns:repeat(5,minmax(90px,1fr));gap:8px;margin:22px 0;overflow:auto}.phase{padding:12px 8px;border-radius:9px;background:#f1f4f9;color:#6d7a91;font-size:12px;text-align:center}.phase.done{background:#e9f5ef;color:#207856}.phase.current{background:#e8efff;color:#2b5bbb;box-shadow:inset 0 0 0 1px #a3bce9}.phase span{display:block;font-size:10px;letter-spacing:1px;margin-bottom:5px}.agent-card{padding:17px;border:1px solid #dbe5f1;border-radius:10px;margin-bottom:14px}.agent-card .agent-name{font-size:17px;font-weight:700}.agent-card p{font-size:14px;color:#536781;margin:8px 0 0}.agent-card .progress{height:5px;background:#e5edf6;border-radius:5px;margin-top:15px}.progress>div{height:100%;background:#4a83ca;border-radius:5px}.log{padding:0;list-style:none;margin:0;font-size:13px;max-height:240px;overflow:auto}.log li{display:flex;gap:12px;border-bottom:1px solid #edf1f6;padding:10px 0}.log time{color:#7286a0;white-space:nowrap;font:12px/1.8 ui-monospace,monospace}.decision-chip{background:#fff6e6;padding:13px 16px;border:1px solid #ecdbb9;border-radius:10px;font-size:13px;margin:14px 0;color:#80561f}.asset-flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0}.asset-flow span{padding:10px 14px;border-radius:8px;border:1px solid #d1def0;background:#f0f5fd;font-size:14px}.asset-flow i{font-style:normal;color:#6a86a8}.source-link{font-size:13px}.metrics-list{display:flex;flex-wrap:wrap;gap:10px}.metrics-list span{font-size:12px;padding:7px 12px;border:1px solid #d7e5df;border-radius:6px;background:#f0f8f5;color:#417763}
+@media(max-width:1100px){.layout{grid-template-columns:175px minmax(0,1fr)}main{padding:24px 18px}.console-body{grid-template-columns:1fr}.task-list{display:flex;gap:8px;overflow:auto;border-right:0;border-bottom:1px solid #e0e7f0}.task-list button{min-width:185px;margin:0}.review-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.layout{display:block}h1{font-size:30px}header{padding:24px 18px}.nav{border:0}main{padding:18px 12px 50px}.toolbar strong{width:100%;font-size:12px}.map-scroll{height:560px;max-height:68vh}.console-main{padding:15px}.phase-list{display:flex}.phase{min-width:100px}.scroll-control{gap:8px}}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">FACTORY BLUEPRINT / WEB FIRST / REV. 03</div>
+  <h1>短视频工厂agent</h1>
+  <p>导入已有素材，也能从零生成。通过 Web 工作台看见任务步骤、Agent 执行动作和每一次质量决策。</p>
+  <div class="chips"><span class="chip">Web 优先</span><span class="chip">素材导入 / 复用</span><span class="chip">Laya 本地决策辅助</span><span class="chip">本地模型推理</span><span class="chip">MiniMax H3 · ComfyUI</span><span class="chip">Qwen Image 2.1 7B</span><span class="chip">状态机 + 可追溯产物</span><span class="chip">开发设计文档 · 非运行控制台</span></div>
+</header>
+<div class="layout">
+<nav class="nav" aria-label="开发文档目录">
+<small>ARCHITECTURE / V3</small>
+<a href="#architecture">01　整体架构图</a>
+<a href="#web-console">02　Web 工作台原型</a><a href="#asset-import">03　素材导入与复用</a><a href="#decision-layer">04　Jev / Laya 决策</a><a href="#review">05　方案审查与修正</a><a href="#modules">06　Agent 与服务职责</a>
+<a href="#contracts">07　接口与数据结构</a>
+<a href="#quality">08　评分与修复闭环</a>
+<a href="#deployment">09　GB10 部署设计</a>
+<a href="#implementation">10　开发实施步骤</a>
+<a href="#repository">11　建议项目目录</a>
+</nav>
+<main>
+<section id="architecture">
+<div class="section-head"><span class="section-num">01 / SYSTEM</span><h2>整体架构图</h2></div>
+<p class="intro muted">从上到下分为 Web 产品、编排决策、创作资产、生成质检、交付恢复五层。彩色泳道区分模块边界，实线表示执行流，虚线表示事件或辅助输入。每个节点可点击查看开发说明。</p>
+<div class="toolbar"><strong>1770 × 1940 · 双向滚动浏览 · 20 个可点击模块</strong><button id="zoom-out" aria-label="缩小架构图">−</button><output id="zoom-value">100%</output><button id="zoom-in" aria-label="放大架构图">+</button><button id="reset">原始大小</button><button id="origin">回到左上角</button><button id="decision-jump">定位 Jev / Laya ↗</button></div>
+<div class="map-scroll" id="map-scroll" tabindex="0" role="region" aria-label="整体架构图，可横向及纵向滚动">
+<div class="map-size" id="map-size"><div class="map" id="map">
+<div class="lane" style="top:40px;height:270px;background:#eef5ff;border-color:#d7e5fa;--lane-ink:#2465bc"><div class="lane-heading"><span class="lane-index">01</span><small>WEB EXPERIENCE</small><strong>Web 产品层</strong><p>用户看得见、<br>可操作的工作台</p></div></div>
+<div class="lane" style="top:370px;height:270px;background:#f2f3fb;border-color:#e0e2f1;--lane-ink:#59629b"><div class="lane-heading"><span class="lane-index">02</span><small>CONTROL PLANE</small><strong>编排与决策</strong><p>任务控制、事件回放<br>小模型辅助选择</p></div></div>
+<div class="lane" style="top:700px;height:270px;background:#f5f1fb;border-color:#e6dff4;--lane-ink:#8053b2"><div class="lane-heading"><span class="lane-index">03</span><small>CREATIVE PIPELINE</small><strong>创作与资产</strong><p>导入优先、按需生成<br>场景与角色一致性</p></div></div>
+<div class="lane" style="top:1030px;height:270px;background:#edf7f5;border-color:#d6eae5;--lane-ink:#237c69"><div class="lane-heading"><span class="lane-index">04</span><small>EXECUTION PLANE</small><strong>生成与质检</strong><p>本地 GPU 执行<br>证据驱动的验收</p></div></div>
+<div class="lane" style="top:1400px;height:290px;background:#fff7ec;border-color:#f0e2ce;--lane-ink:#a36721"><div class="lane-heading"><span class="lane-index">05</span><small>DELIVERY & RECOVERY</small><strong>交付与恢复</strong><p>有限重试、人工接管<br>合格成片可追溯</p></div></div>
+<svg viewBox="0 0 1770 1940" aria-hidden="true">
+<defs><marker id="flow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#60769c"/></marker><marker id="assist" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#9a6a24"/></marker><marker id="pass" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="#278c74"/></marker></defs>
+<g fill="none" stroke="#60769c" stroke-width="2" marker-end="url(#flow)" stroke-linejoin="round">
+<path d="M410 280 V400"/><path d="M570 505 H620"/><path d="M940 505 H990"/>
+<path d="M700 610 V665 H410 V730"/>
+<path d="M570 835 H620"/><path d="M940 835 H990"/><path d="M1310 835 H1360"/>
+<path d="M1520 940 V997 H410 V1060"/>
+<path d="M570 1165 H620"/><path d="M940 1165 H990"/><path d="M1310 1165 H1360"/>
+<path d="M1310 1535 H1360"/>
+</g>
+<g fill="none" stroke="#6483ad" stroke-width="1.7" stroke-dasharray="6 5" marker-end="url(#flow)">
+<path d="M1150 400 V280"/>
+<path d="M940 175 H965 V835 H990"/>
+<path d="M1250 940 V1008 H1150 V1060"/>
+</g>
+<g fill="none" stroke="#af792c" stroke-width="2" marker-end="url(#assist)">
+<path d="M1520 1270 V1340 H410 V1430"/>
+<path d="M250 1535 H220 V835 H250"/>
+<path d="M570 1535 H620"/>
+</g>
+<g fill="none" stroke="#af792c" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#assist)">
+<path d="M1480 610 V650 H800 V610"/>
+<path d="M1590 610 V730"/>
+</g>
+<g fill="none" stroke="#278c74" stroke-width="2.3" marker-end="url(#pass)">
+<path d="M1570 1270 V1373 H1150 V1430"/>
+</g>
+<g class="edge-label">
+<text x="427" y="347">项目命令 ↓</text><text x="1166" y="347">↑ SSE 事件回放</text>
+<text x="440" y="657">依赖满足 → 开始生产</text><text x="1080" y="642" fill="#995b1d">小模型建议 → 规则校验</text>
+<text x="730" y="989">生成路径 → 模板已校验的 RenderRequest</text>
+<text x="1174" y="1021" font-size="12">导入视频复用 → 直接质检 ↓</text>
+<text x="620" y="1332" fill="#995b1d">失败 → 带证据修复 / 超预算转人审</text>
+<text x="1240" y="1365" fill="#187a62">通过 → 接受此 Run</text>
+<text x="590" y="1504" text-anchor="middle" fill="#995b1d" font-size="12">人审</text>
+</g>
+</svg>
+<div id="nodes"></div>
+<div class="support-title">SHARED FOUNDATION <span>所有模块共享的持久化与运行底座</span></div>
+<div class="foundation">
+<div><b>PostgreSQL</b><span>状态 · StepRun · Outbox · 审计</span></div>
+<div><b>Asset Store</b><span>导入原件 · 代理预览 · 生成产物</span></div>
+<div><b>Local Model Runtime</b><span>Qwen · Qwen Image · Laya · H3 · VLM</span></div>
+<div><b>Metrics &amp; Trace</b><span>队列耗时 · GPU 占用 · 通过率</span></div>
+</div>
+</div></div>
+</div>
+<div class="scroll-control"><label for="horizontal-scroll">左右浏览 <input id="horizontal-scroll" type="range" min="0" max="1000" value="0" aria-label="水平滚动架构图"></label><span id="scroll-position">横向 0% · 纵向 0%</span><span>图框右侧滚动条查看下半部分 ↓</span></div>
+<div class="flow-legend"><span><i></i>执行流</span><span><i class="dashed"></i>事件 / 参考输入</span><span><i class="green"></i>验收通过</span><span><i class="orange"></i>辅助决策 / 失败恢复</span></div><div class="panel detail" id="node-detail" aria-live="polite">
+<div class="tag" id="detail-tag"></div><h3 id="detail-title"></h3>
+<div class="detail-grid"><div><p id="detail-description"></p><p><strong>输出：</strong><span id="detail-output"></span></p></div><div><strong>开发要点</strong><ul id="detail-items"></ul></div></div>
+</div>
+</section>
+
+
+<section id="web-console">
+<div class="section-head"><span class="section-num">02 / WEB WORKSPACE</span><h2>Web 工作台：看见任务步骤和 Agent 干活情况</h2></div>
+<p class="muted">Web 是首个交付入口。项目、素材、分镜、视频生成、任务监控和审核共用同一份状态；下面可以切换镜头、推进步骤或模拟暂停，预览未来控制台的交互。</p>
+<div class="console">
+<div class="console-bar"><strong>工厂工作台 / 雨夜来信 · EP01</strong><span class="badge">交互原型 · 演示数据</span></div>
+<div class="console-body">
+<div class="task-list" id="demo-tasks" aria-label="示例镜头任务"></div>
+<div class="console-main">
+<div class="console-title"><h3 id="demo-title"></h3><span id="demo-status" class="badge"></span></div>
+<div class="demo-label">仅演示浏览器交互：没有后台任务，也不会调用任何模型。</div>
+<div id="demo-phases" class="phase-list" aria-label="任务步骤"></div>
+<div class="agent-card"><span class="tag">当前执行者</span><div class="agent-name" id="demo-agent"></div><p id="demo-action"></p><div class="progress"><div id="demo-progress"></div></div><p class="small" id="demo-output"></p></div>
+<div class="decision-chip" id="demo-decision"></div>
+<div class="demo-actions"><button id="demo-next">模拟下一步骤 →</button><button id="demo-pause">模拟暂停调度</button><button id="demo-reset">重置示例</button></div>
+<div class="label" style="margin-top:20px;font-weight:700;font-size:13px">Agent 动作与工具事件</div>
+<ul id="demo-log" class="log" aria-live="polite"></ul>
+</div></div></div>
+<div class="grid3" style="margin-top:16px">
+<div class="panel"><h3>项目与素材页</h3><p>上传剧本、图片、视频、音频；批量标记用途；浏览预览、角色、版本、引用关系和处理状态。</p></div>
+<div class="panel"><h3>视频生成页</h3><p>左侧选镜头和素材，中间编辑提示词、参数与候选，右侧查看小模型建议、当前 Agent、真实采样进度和失败证据。</p></div>
+<div class="panel"><h3>任务与审核页</h3><p>按项目、镜头、步骤下钻；显示排队、加载、执行、评分、等待审核。支持暂停后续调度、取消、修改后恢复。</p></div>
+</div>
+<details><summary>实时观测的数据契约与控制语义</summary>
+<p>后端建议发布事件：<code>step.queued</code>、<code>agent.started</code>、<code>decision.proposed</code>、<code>tool.progress</code>、<code>artifact.created</code>、<code>quality.evaluated</code>、<code>step.completed</code>、<code>run.failed</code>。</p>
+<pre><code>{
+  "event_id": "evt_1024", "seq": 1024,
+  "project_id": "p01", "run_id": "r07",
+  "step_id": "render", "attempt_id": "a02",
+  "type": "tool.progress", "actor": "comfyui-adapter",
+  "timestamp": "2026-09-25T08:00:00Z",
+  "progress": {"unit": "sampling_step", "current": 16, "total": 30},
+  "summary": "正在执行视频采样",
+  "artifact_ids": [], "state_version": 19
+}</code></pre>
+<p>先请求带 <code>snapshot_seq</code> 的状态快照，再订阅后续 SSE；断线使用事件游标补齐，重复事件按 ID 去重。没有可测进度的 Agent 显示“执行中 + 已耗时”，不伪造百分比。页面展示行动摘要、结构化决策和工具结果。</p>
+<p><strong>暂停：</strong>停止调度后续任务，运行中的模型继续到安全边界。<strong>取消：</strong>进入 CANCEL_REQUESTED，执行器确认后才是 CANCELLED；拒绝已失效 attempt 的迟到结果。<strong>恢复：</strong>检查依赖版本后从可复用步骤继续。</p>
+</details>
+</section>
+
+<section id="asset-import">
+<div class="section-head"><span class="section-num">03 / ASSET INGESTION</span><h2>素材导入与生成共用一个资产系统</h2></div>
+<p class="muted">每个素材明确来源与用途。优先使用用户导入且满足条件的素材，只有缺口才生成；成片片段可以绕过 H3 渲染，但仍需经过质检。</p>
+<div class="asset-flow"><span>拖拽 / 批量上传</span><i>→</i><span>上传会话与文件校验</span><i>→</i><span>去重 / 媒体探测</span><i>→</i><span>代理预览与索引</span><i>→</i><span>绑定角色 / 场景 / 镜头</span></div>
+<div class="table-scroll"><table><thead><tr><th>素材类型</th><th>用户可以做什么</th><th>在生产线中的去向</th></tr></thead><tbody>
+<tr><td>剧本 / 文本</td><td>上传或粘贴已有剧本，修改场次和对白。</td><td>解析为 Script，交给分镜与连续性 Agent。</td></tr>
+<tr><td>图片</td><td>导入角色定妆照、服装、场景图、首帧或尾帧。</td><td>AssetBinding → 画布与视频条件；缺失时调用 Qwen Image。</td></tr>
+<tr><td>视频</td><td>作为角色/运动参考，或指定时间范围直接复用为镜头。</td><td>参考模式按能力表接入；直接复用则裁剪/标准化 → 质检 → 接受。</td></tr>
+<tr><td>音频 / 字幕</td><td>导入台词、配音、配乐、字幕与时间轴。</td><td>生成条件（能力支持时）或后期素材；检验时间轴与音画一致性。</td></tr>
+</tbody></table></div>
+<div class="grid2" style="margin-top:16px">
+<div class="panel"><h3>资产字段</h3><p><code>asset_id / project_id / source / media_type / sha256 / version / metadata / storage_key / preview_key</code></p><p><code>source = imported | generated | derived</code>。衍生物记录 <code>parent_asset_ids</code>；关联表保存角色、镜头、用途和视频裁剪范围。</p><p class="muted small">原件不可变；转码与裁剪生成新资产。READY 代表处理完成，不代表通过镜头质量验收。</p></div>
+<div class="panel"><h3>导入实现约束</h3><ul><li>支持分块、续传、提交后校验校验和。</li><li>使用服务端 Asset ID / 存储键，不接受客户端任意绝对路径。</li><li>文件探测、缩略图和代理转码在后台执行。</li><li>去重不丢失项目权限、来源和角色绑定。</li><li>浏览器所在电脑的路径不能当作 GB10 文件路径。</li></ul></div>
+</div>
+<div class="state">UPLOADING → VALIDATING → PROCESSING → READY / FAILED<br>READY → 参考输入 → 生成 → 质检<br>READY → 直接复用片段 → 标准化 → 质检 → ACCEPTED</div>
+</section>
+
+<section id="decision-layer">
+<div class="section-head"><span class="section-num">04 / SMALL MODEL ROUTING</span><h2>Jev / Laya：辅助决策，加速端到端生产</h2></div>
+<div class="grid2">
+<div class="panel"><span class="badge green">本地默认候选</span><h3 style="margin-top:10px">Laya Decision Worker</h3><p>Laya 提供面向文本/JSON 的 choice、score、noul 决策。项目提供本地权重与多语言路径，可用于有限选项路由；中文状态优先验证多语言版本。其文档提示领域适配和置信校准仍然必要。</p><p class="source-link">依据：<a href="https://github.com/NandhaKishorM/laya" target="_blank" rel="noopener">Laya 项目文档与能力边界</a>。不将官方其他硬件的速度数字套用到 GB10。</p></div>
+<div class="panel"><span class="badge amber">保留适配接口 · 默认关闭</span><h3 style="margin-top:10px">Jev-compatible Decision Port</h3><p>TypeSafe 官方将 Jev 定位为结构化决策模型，当前官方页面展示服务/API 接入。此次未核实到可下载的本地权重；在你的全本地约束下，Jev 仅保留接口位置，实际执行优先验证 Laya。</p><p class="source-link">依据：<a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener">TypeSafe 官方介绍</a>、<a href="https://api.typesafe.ai/docs" target="_blank" rel="noopener">官方 API 文档</a>。</p></div>
+</div>
+<div class="asset-flow"><span>规则排除不可执行项</span><i>→</i><span>压缩状态 + 候选集合</span><i>→</i><span>Laya 结构化建议</span><i>→</i><span>校验 / 校准阈值</span><i>→</i><span>执行或回退 Qwen</span></div>
+<div class="table-scroll"><table><thead><tr><th>调用位置</th><th>小模型辅助判断</th><th>潜在收益与边界</th></tr></thead><tbody>
+<tr><td>素材准备前</td><td>根据素材元数据和 VLM 描述，建议复用、补图或补充输入。</td><td>有望减少重复生图；哈希去重和版本一致性仍由代码确定。</td></tr>
+<tr><td>视频生成前</td><td>从已验证的文生/图像条件/参考模式及参数档位中选候选。</td><td>有望减少大模型路由调用；不能创造 H3 不支持的模式。</td></tr>
+<tr><td>质检失败后</td><td>按证据建议“改提示词 / 换素材 / 改分镜 / 人审”。</td><td>有望减少无效重试；不能直接读视频或豁免质量规则。</td></tr>
+<tr><td>队列调度辅助</td><td>在硬依赖与优先级允许的候选中提供批处理建议。</td><td>减少加载切换的效果需实测；GPU 租约和最终调度由程序控制。</td></tr>
+</tbody></table></div>
+<div class="note">加速指标是“每条合格视频的总耗时与重试次数”。Laya 不直接减少 H3 的扩散步数；决策概率也不等于视频质量分。样片升级为高质量视频后，必须重新质检。</div>
+<details><summary>DecisionAdvice 应用层协议（建议设计，不是官方 SDK 参数）</summary>
+<pre><code>{
+  "decision_id": "d12",
+  "state_hash": "sha256:...",
+  "allowed_actions": ["reuse_clip", "image_conditioned", "replan"],
+  "selected_action": "image_conditioned",
+  "model_id": "configured-local-laya",
+  "model_revision": "pinned-revision",
+  "calibration_version": "routing-zh-v1",
+  "evidence_ids": ["asset_12", "shot_spec_3"],
+  "accepted_by_policy": true,
+  "fallback": null
+}</code></pre>
+<p>不要要求 Laya 输出长篇推理或替代提示词生成。输入必须包含有效的短状态与少量合法候选；缺证据、超出上下文、异常或低置信时，回退规则/Qwen。解释文案由所选动作、规则和证据引用生成。</p>
+</details>
+<p class="muted">先以影子模式运行：保存建议但不影响任务；用独立中文镜头样本校准后逐步启用。优先实测 CPU，只有端到端收益明确时才占用 GB10 GPU。</p>
+<div class="metrics-list"><span>合格视频 P50 / P95 耗时</span><span>渲染尝试数</span><span>大模型调用减少量</span><span>决策错误 / 回退率</span><span>小模型额外耗时与内存</span><span>验收质量不降低</span></div>
+</section>
+
+<section id="review">
+<div class="section-head"><span class="section-num">05 / DESIGN REVIEW</span><h2>方案审查：本轮修正的关键问题</h2></div>
+<div class="review-grid">
+<div class="review-card"><span class="badge green">已补全设计</span><b>导入素材缺少一等入口</b><p>新增上传会话、处理状态、用途绑定、版本和来源。可复用视频直接走质检，避免不必要地重新生成。</p></div>
+<div class="review-card"><span class="badge green">已调整优先级</span><b>Web 不应等到最后才建设</b><p>首个开发切片就包含上传、镜头列表和事件流；每个后端步骤都能在浏览器中定位执行者与结果。</p></div>
+<div class="review-card"><span class="badge green">已修正恢复语义</span><b>请求重发与新一轮生成混淆</b><p>用 command_id 区分网络重发，用 attempt_id 区分主动重生成。输入哈希用于追溯/缓存，不替代业务幂等。</p></div>
+<div class="review-card"><span class="badge green">已补充可靠性</span><b>队列与进度缺少持久化事件</b><p>状态更新与 Outbox 同事务，去重发布事件；SSE 支持游标回放。GPU 租约失效需核实旧进程，而非立即再占用。</p></div>
+<div class="review-card"><span class="badge amber">需实机验证</span><b>小模型不自动带来渲染加速</b><p>Laya 只优化有限决策与失败分流；先验证中文领域准确率、校准和端到端收益。Jev 不默认接入离线链路。</p></div>
+<div class="review-card"><span class="badge green">已加强验收</span><b>样片通过不能代替成片通过</b><p>导入、标准化、高质量重渲染均可能改变输出；按最终产物重新评分，只有被接受的版本参与合成。</p></div>
+</div>
+</section>
+
+<section id="modules">
+<div class="section-head"><span class="section-num">06 / RESPONSIBILITIES</span><h2>Agent 与服务职责</h2></div>
+<p class="muted">Agent 是共享结构化状态的角色任务；同一文本模型可以轮流执行这些任务。生成、排队、状态转换和放行由服务执行。</p>
+<div class="table-scroll"><table><thead><tr><th>模块</th><th>输入 → 输出</th><th>实现归属</th><th>开发边界</th></tr></thead><tbody>
+<tr><td>Web 工作台 / 资产接入</td><td>用户命令、文件 → UploadSession、AssetBinding、任务视图</td><td>Web 前端 + FastAPI + 素材 Worker</td><td>前端不直连模型；通过事件流观察并操作任务。</td></tr>
+<tr><td>小模型辅助决策</td><td>短文本状态、合法动作 → DecisionAdvice</td><td>本地 Laya；Jev 仅保留接口</td><td>领域验证、置信校准、规则校验；异常回退。</td></tr>
+<tr><td>制片 / 编剧 Agent</td><td>主题、时长、风格 → Brief、剧本、场次</td><td>本地 Qwen 文本模型</td><td>校验剧本长度、镜头预算和角色 ID。</td></tr>
+<tr><td>分镜 / 连续性 Agent</td><td>剧本、角色状态 → ShotSpec、连续性约束</td><td>本地 Qwen 文本模型 + 规则</td><td>每个镜头明确动作、构图、台词和必须出现的元素。</td></tr>
+<tr><td>视觉资产服务</td><td>角色与场景定义 → 参考图、关键帧</td><td>Qwen Image 2.1 7B（按用户配置名）</td><td>导入与生成共用资产接口；先复用，再补缺口；批准资产固定版本。</td></tr>
+<tr><td>提示词优化 Agent</td><td>ShotSpec、历史失败 → PromptSpec</td><td>本地 Qwen 文本模型</td><td>仅修改允许字段；保留失败前后的差异。</td></tr>
+<tr><td>工作流编译与渲染</td><td>PromptSpec、参考资产 → RenderRequest、VideoAsset</td><td>ComfyUI Adapter + MiniMax H3</td><td>使用实机导出的 API 工作流；模型支持的输入由能力表确定。</td></tr>
+<tr><td>评分服务</td><td>候选视频、验收标准 → ScoreReport、证据片段</td><td>本地视觉理解模型 + 视频/音频检测工具</td><td>不把图像生成模型当成视频理解模型；不确定结果转复核。</td></tr>
+<tr><td>修复 Agent</td><td>失败报告、历史尝试 → RepairPlan</td><td>本地 Qwen 文本模型</td><td>返回修改方案，由规则校验后执行；重试预算不可绕过。</td></tr>
+<tr><td>编排 / 剪辑 / 导出</td><td>状态事件、接受的镜头 → 成片、清单</td><td>FastAPI、任务队列、PostgreSQL、FFmpeg</td><td>只选 accepted_run_id；整片再验收后交付。</td></tr>
+</tbody></table></div>
+<div class="note">模型命名说明：保留你提供的 Qwen 文本模型、Qwen Image 2.1 7B 和 MiniMax H3 名称。开发前把实际仓库 ID、权重版本、量化方式、许可证与输入能力写入配置；本页不将模型名称视为 GB10 已通过兼容性验证。</div>
+</section>
+
+<section id="contracts">
+<div class="section-head"><span class="section-num">07 / CONTRACTS</span><h2>接口与数据结构</h2></div>
+<div class="grid2">
+<div class="panel"><h3>项目统一状态</h3><p class="muted">数据库是事实来源。模型上下文从已保存状态构建，避免角色任务各自维护冲突的“记忆”。</p><ul><li><strong>Project / Scene / Shot：</strong>层级、风格与镜头规格。</li><li><strong>Character / Asset：</strong>角色身份、服装、素材版本和摘要。</li><li><strong>Run：</strong>单次执行输入、模型版本、seed、外部任务 ID。</li><li><strong>ScoreReport / RepairPlan：</strong>分数、证据、修复差异。</li><li><strong>StepRun / Event / Outbox：</strong>步骤执行者、工具调用、进度、事务事件及重试原因。</li><li><strong>UploadSession / AssetBinding / DecisionAdvice：</strong>分块上传、素材用途、模型建议与规则执行记录。</li></ul></div>
+<div class="panel"><h3>幂等、恢复与版本</h3><ul><li>请求重发复用 <code>command_id</code>；主动再生成使用新命令和 <code>attempt_id</code>。</li><li>Run 与 Outbox 同事务登记；提交渲染后关联 <code>prompt_id</code>，模糊结果先对账。</li><li>输入哈希包含模型/工作流版本、素材版本、参数与 seed；缓存匹配仍需验证当前验收规则。</li><li>修复创建新 Run；保留旧视频及输入用于比较。</li><li>角色或场景版本变化时，标记依赖镜头待复核。</li></ul></div>
+</div>
+<div class="table-scroll" style="margin-top:16px"><table><thead><tr><th>建议业务 API</th><th>用途</th><th>返回 / 约束</th></tr></thead><tbody>
+<tr><td><code>POST /assets/uploads</code></td><td>创建可续传上传会话</td><td>upload_id、分块信息、限制</td></tr>
+<tr><td><code>PUT /assets/uploads/{id}/parts/{n}</code></td><td>上传/重传分块</td><td>分块校验；重复块幂等</td></tr>
+<tr><td><code>POST /assets/uploads/{id}/complete</code></td><td>提交上传并后台处理</td><td>asset_id、processing_job_id</td></tr>
+<tr><td><code>POST /shots/{id}/asset-bindings</code></td><td>绑定参考素材或复用片段</td><td>role、asset_version、clip_range</td></tr>
+<tr><td><code>POST /runs/{id}/commands</code></td><td>暂停、恢复、取消和主动重试</td><td>command_id、expected_state_version</td></tr>
+<tr><td><code>GET /runs/{id}/steps</code></td><td>查看步骤、执行者、调用与产物</td><td>StepRun[]、trace 引用</td></tr>
+<tr><td><code>POST /projects</code></td><td>创建项目与生产约束</td><td>project_id、schema_version</td></tr>
+<tr><td><code>POST /projects/{id}/plan</code></td><td>生成剧本、场次与分镜</td><td>job_id；异步任务</td></tr>
+<tr><td><code>POST /shots/{id}/runs</code></td><td>提交一个镜头的生产任务</td><td>run_id；需要幂等键</td></tr>
+<tr><td><code>GET /runs/{id}</code></td><td>查询阶段、候选资产与评分</td><td>state、artifacts、score、failure</td></tr>
+<tr><td><code>POST /runs/{id}/review</code></td><td>记录人工接受、拒绝或修改</td><td>审计事件；显式人工豁免独立记录</td></tr>
+<tr><td><code>POST /projects/{id}/export</code></td><td>合成已经验收的镜头</td><td>export_job_id；缺镜头时阻止交付</td></tr>
+<tr><td><code>GET /projects/{id}/events</code></td><td>前端实时展示任务进度</td><td>SSE 事件流；seq 游标、去重与快照补偿</td></tr>
+</tbody></table></div>
+<details open><summary>ShotSpec 示例：所有生成与评分共享同一个目标</summary>
+<pre><code>{
+  "schema_version": "2",
+  "material_policy": "prefer_imported",
+  "production_mode": "generate",
+  "shot_id": "ep01-sc02-sh03",
+  "duration_s": 5,
+  "aspect_ratio": "9:16",
+  "characters": [{"id": "hero", "asset_version": 3}],
+  "scene_asset_id": "rooftop-night-v2",
+  "action": "女主停下脚步，然后回头看向红灯",
+  "camera": {"size": "medium_closeup", "movement": "slow_push"},
+  "continuity": {"costume": "gray_coat", "prop": "black_phone"},
+  "reference_assets": ["hero-v3-front", "rooftop-night-v2"],
+  "acceptance": {
+    "required": ["女主回头", "红灯出现", "服装保持一致"],
+    "forbidden": ["额外人物", "水印"],
+    "rubric_version": "shortdrama-v1"
+  }
+}</code></pre></details>
+<details><summary>ScoreReport 与修复计划示例</summary>
+<pre><code>{
+  "run_id": "run_003",
+  "verdict": "repair",
+  "hard_checks": {"decodable": true, "duration_ok": true},
+  "scores": {"identity": 0.74, "action": 0.86, "temporal": 0.81},
+  "evidence": [{"tag": "identity_drift", "time_s": [2.0, 3.5]}],
+  "uncertain": false,
+  "rubric_version": "shortdrama-v1",
+  "repair": {
+    "target": "reference_assets",
+    "action": "replace_with_approved_closeup",
+    "invalidate_from": "PROMPT_READY"
+  }
+}</code></pre></details>
+</section>
+
+<section id="quality">
+<div class="section-head"><span class="section-num">08 / QUALITY LOOP</span><h2>评分、修复与状态机</h2></div>
+<div class="state">PLANNED → ASSET_READY → PROMPT_READY → QUEUED → RENDERING → GENERATED → SCORING → ACCEPTED<br>素材复用路径：ASSET_READY → NORMALIZING → SCORING → ACCEPTED<br>SCORING → REPAIRING → PROMPT_READY / ASSET_READY<br>预算耗尽或评分不确定 → HUMAN_REVIEW　｜　执行异常 → RETRY_WAIT / FAILED</div>
+<div class="grid3" style="margin-top:16px">
+<div class="panel"><h3>1. 文件与技术检查</h3><p>用确定性工具验证文件可解码、分辨率、时长、音轨、黑屏及重复帧。检测结果和阈值进入报告。</p><p class="muted small">角色数量、身份和水印识别属于语义检测，不能宣称仅靠文件规则可靠判断。</p></div>
+<div class="panel"><h3>2. 语义与时间维度</h3><p>以角色参考图、ShotSpec、均匀采样帧及关键动作片段为输入，检查身份、动作、场景、连续性与音画要求。</p><p class="muted small">抽帧无法保证发现全部瞬时问题；不确定时追加片段检查或转人审。</p></div>
+<div class="panel"><h3>3. 决策与预算</h3><p>验收规则显式版本化；关键要求不通过就拒绝。总分只用于排序候选，不能抵消关键项失败。</p><p class="muted small">0.85 等阈值是试验起点，不是准确率承诺。先用标注样本校准。</p></div>
+</div>
+<div class="table-scroll" style="margin-top:16px"><table><thead><tr><th>失败标签</th><th>修复动作</th><th>重新执行起点</th></tr></thead><tbody>
+<tr><td>identity_drift / costume_mismatch</td><td>检查角色素材版本；更换批准的参考图；选择实机支持的参考工作流。</td><td>ASSET_READY 或 PROMPT_READY</td></tr>
+<tr><td>action_incomplete</td><td>减少动作数量；明确动作先后；必要时将复杂镜头拆开。</td><td>分镜重规划 → PLANNED</td></tr>
+<tr><td>composition_mismatch</td><td>重新生成构图锚帧；再执行图像条件的视频工作流。</td><td>ASSET_READY</td></tr>
+<tr><td>flicker / deformation</td><td>调整运动、片段长度和已验证的采样配置；记录新旧参数。</td><td>PROMPT_READY</td></tr>
+<tr><td>dialogue_mismatch / audio_issue</td><td>校验台词、音轨与授权声音资产；按实际能力重生成或独立后期。</td><td>渲染或音频后期</td></tr>
+<tr><td>OOM / timeout / worker_crash</td><td>先核实或终止旧进程，确认资源释放；增加 fencing token 后再排队；拒绝旧尝试的迟到结果。</td><td>基础设施重试，不记作创作评分失败</td></tr>
+</tbody></table></div>
+<p class="muted">建议初始预算：首轮 + 最多 2 次自动修复；另设累计执行时长上限。超过预算进入人审，保存最佳候选但不自动当作合格成片。</p>
+</section>
+
+<section id="deployment">
+<div class="section-head"><span class="section-num">09 / LOCAL RUNTIME</span><h2>GB10 本地部署设计</h2></div>
+<p class="intro muted">先采用单机、单个重型推理任务的调度方式。文本、图像、视频、评分与小模型辅助决策 Worker 是逻辑职责，可以共享一个进程池与 GPU 租约；无需同时把所有模型加载进内存。</p>
+<div class="grid2">
+<div class="panel"><h3>建议 MVP 组合</h3><ul><li>Web 前端：项目、素材、画布、视频生成和任务监控，作为首个交付入口。</li><li>FastAPI：业务 API、鉴权与可回放事件流。</li><li>PostgreSQL：持久化状态、版本和任务事件。</li><li>Celery + Redis：执行任务与排队；数据库保存权威状态。</li><li>本地文件目录：素材存储，通过 AssetStore 接口读写。</li><li>ComfyUI：执行已冻结并验证的工作流。</li><li>FFmpeg / ffprobe：抽帧、音视频检查与合成。</li></ul><p class="muted small">任务规模扩大后再按需求替换为 Temporal、对象存储或多机 Worker。</p></div>
+<div class="panel"><h3>GB10 资源管理</h3><ul><li>依次实测文本、图像、视频、评分与 Laya；小模型先评估 CPU 路径。</li><li>记录加载时间、峰值内存、单镜耗时与失败率。</li><li>重型推理执行前申请独占租约；心跳与 fencing token 防止重复占用和迟到提交。</li><li>阶段切换时卸载模型并确认资源释放。</li><li>按模型批处理可减少加载开销；不破坏镜头依赖。</li><li>验证 ARM64、驱动、PyTorch 与自定义节点的兼容性。</li></ul></div>
+</div>
+<div class="panel" style="margin-top:16px"><h3>ComfyUI 接入顺序</h3><ol><li>在 GB10 手动跑通所需模型的最小工作流，再导出 API JSON。</li><li>定义允许替换的输入：提示词、素材路径、seed、尺寸与时长。根据实际节点映射，不硬编码未经验证的节点名。</li><li>Adapter 校验输入、注入参数并提交；记录返回的任务标识。</li><li>读取进度与历史结果，验明输出文件完整后登记 Asset；API 细节以安装版本为准。</li><li>将工作流哈希、模型配置、所有条件输入和输出一起记录到 Run。</li></ol></div>
+</section>
+
+<section id="implementation">
+<div class="section-head"><span class="section-num">10 / BUILD PLAN</span><h2>开发实施步骤与验收标准</h2></div>
+<p class="muted">按交付物推进。先证明单镜头链路可运行、可恢复，再扩展到整集和全自动处理。</p>
+<div class="steps"><div class="step"><div class="step-num">01</div><div><h3>Web 项目骨架与素材导入</h3><p>先实现项目、素材库、镜头列表，配合 API、Asset Store 和上传后台任务；同时在 GB10 验证实际权重与工作流。</p><div class="accept">验收：浏览器可上传图片/视频、预览处理状态并绑定镜头；模型有真实冒烟输出。</div></div></div>
+<div class="step"><div class="step-num">02</div><div><h3>步骤状态、事件流与控制命令</h3><p>建立 Run、StepRun、Event、Outbox；Web 展示步骤、执行者与产物。实现 command_id、状态版本及 SSE 回放。</p><div class="accept">验收：刷新/断网重连后恢复相同任务；重复命令不会创建重复执行。</div></div></div>
+<div class="step"><div class="step-num">03</div><div><h3>本地 H3 渲染与素材复用双路径</h3><p>封装 ComfyUI 模板；图像参考进入生成，导入视频可直接标准化并评分；记录外部任务 ID 与 GPU 租约。</p><div class="accept">验收：网页能看到真实执行进度；重复视频不强制生成；提交超时可以对账。</div></div></div>
+<div class="step"><div class="step-num">04</div><div><h3>分镜 Agent、场景画布和缺口生成</h3><p>接入 Qwen 结构化分镜和可编辑画布，建立角色与场景版本。导入优先，缺少素材时再用 Qwen Image。</p><div class="accept">验收：五镜头项目可混用导入/生成素材，素材替换后只标记受影响的依赖。</div></div></div>
+<div class="step"><div class="step-num">05</div><div><h3>独立质检与最终产物验收</h3><p>建立人工标注集，验证技术检测、视觉评估与证据。Web 可并排查看候选、评分和失败片段。</p><div class="accept">验收：报告误放/误拒率；导入片段与高质量重渲染产物都再次验收。</div></div></div>
+<div class="step"><div class="step-num">06</div><div><h3>Laya 影子评估与有限自动路由</h3><p>实现 DecisionPort 与本地 Laya；只记录候选选择，先不改变执行。验证中文场景、校准与资源开销，再启用合格策略。</p><div class="accept">验收：质量不降低的前提下证明决策耗时/重试次数收益；低置信和服务故障可回退。</div></div></div>
+<div class="step"><div class="step-num">07</div><div><h3>修复闭环、成片合成与恢复测试</h3><p>接入差异化修复、预算、人审和 FFmpeg 成片；验证暂停、取消、Worker 崩溃、事件重放与迟到结果拒绝。</p><div class="accept">验收：可交付混合素材样片；端到端每步可观察、可追溯、可恢复。</div></div></div></div>
+</section>
+
+<section id="repository">
+<div class="section-head"><span class="section-num">11 / CODE ORGANIZATION</span><h2>建议项目目录与首个开发切片</h2></div>
+<div class="grid2">
+<pre style="margin:0"><code>short-video-factory/
+├── apps/
+│   ├── api/                 # FastAPI + SSE
+│   └── web/                 # 素材、画布、任务、生成、审核
+├── domain/
+│   ├── schemas/             # ShotSpec / ScoreReport
+│   ├── state_machine/       # 转换、预算、版本规则
+│   ├── events/              # Outbox、SSE、快照与游标
+│   └── repositories/        # 数据访问
+├── agents/                  # 编剧、导演、提示词、修复
+├── adapters/
+│   ├── text_model/
+│   ├── image_model/
+│   ├── comfyui/
+│   ├── vision_judge/
+│   ├── decision/            # Laya 实现、Jev 接口占位
+│   └── asset_store/
+├── ingestion/               # 分块上传、探测、预览、用途绑定
+├── workers/                 # 排队、租约、执行
+├── quality/                 # 检测、评分、证据
+├── workflows/               # 冻结的 ComfyUI API JSON
+├── config/                  # 模型、评分、修复策略
+├── migrations/
+├── evals/                   # 标注样本与回归评估
+└── tests/                   # 状态机、适配器与恢复</code></pre>
+<div class="panel"><h3>第一条可验收的业务路径</h3><p>在 Web 导入一张角色图 → 绑定镜头规格 → 提交本地 ComfyUI → 实时观察步骤 → 视频评分 → 网页审核并导出。</p><p>同时验证“导入视频 → 直接质检 → 复用交付”分支。闭环稳定后逐步加入创作 Agent 和经验证的 Laya 决策。</p><h3 style="margin-top:22px">开发看板需要的指标</h3><ul><li>首轮合格率、最终合格率与人审率。</li><li>每个接受镜头的生成次数与总耗时。</li><li>各失败标签的修复成功率。</li><li>模型加载耗时、峰值内存和 OOM 次数。</li><li>评分误放率与成片复核失败率。</li></ul></div>
+</div>
+</section>
+<footer>短视频工厂agent · 架构修订 v3 · 页面离线可用。控制台为交互原型，后端、模型服务与 API 尚未实现。模型资料核对日期：2026-09-25；实际能力以固定版本与 GB10 实测为准。</footer>
+</main>
+</div>
+<script>
+const nodes = [
+  {
+    "id": "web",
+    "x": 250,
+    "y": 70,
+    "kind": "web",
+    "n": "01",
+    "title": "项目与分镜工作台",
+    "meta": "WEB / 浏览器优先",
+    "desc": "创建项目、编辑分镜、绑定角色；提交任务并控制暂停与恢复。",
+    "out": "ProjectSpec · Command",
+    "items": [
+      "会话与项目访问控制；浏览器只调用业务 API。",
+      "通过节点步骤查看输入、输出与产物。",
+      "暂停是停止后续调度；运行中的任务须确认取消结果。"
+    ]
+  },
+  {
+    "id": "import",
+    "x": 620,
+    "y": 70,
+    "kind": "web",
+    "n": "02",
+    "title": "素材导入与资产库",
+    "meta": "WEB / 图片 · 视频 · 音频",
+    "desc": "拖拽上传、批量导入；为素材指定角色、场景或成片片段用途。",
+    "out": "UploadSession · AssetBinding",
+    "items": [
+      "支持断点上传、去重和原始文件留存。",
+      "角色参考、场景参考、片段复用明确区分。",
+      "服务器目录仅可由后端已配置的数据源导入。"
+    ]
+  },
+  {
+    "id": "monitor",
+    "x": 990,
+    "y": 70,
+    "kind": "web",
+    "n": "03",
+    "title": "任务步骤与 Agent 动态",
+    "meta": "WEB / 实时可观测",
+    "desc": "查看当前步骤、负责 Agent、调用记录、预览和可解释的决策摘要。",
+    "out": "任务 DAG · Event Timeline",
+    "items": [
+      "订阅持久化事件，断线按游标补齐。",
+      "进度来自执行器；未知进度显示阶段与耗时。",
+      "展示输入摘要和工具结果，不把虚构思考过程当日志。"
+    ]
+  },
+  {
+    "id": "preview",
+    "x": 1360,
+    "y": 70,
+    "kind": "web",
+    "n": "04",
+    "title": "视频生成与审核页面",
+    "meta": "WEB / 候选对比",
+    "desc": "查看参考素材、提示词、候选视频、评分与小模型路由结果。",
+    "out": "ReviewEvent · ExportRequest",
+    "items": [
+      "可以查看本地 Laya 的建议与规则应用结果。",
+      "人工接受、驳回、重新生成均形成审计事件。",
+      "导出仅使用接受的 Run；示例页面不等于已连接模型。"
+    ]
+  },
+  {
+    "id": "api",
+    "x": 250,
+    "y": 400,
+    "kind": "control",
+    "n": "05",
+    "title": "业务 API 与命令入口",
+    "meta": "FastAPI / REST",
+    "desc": "统一接收上传、生成、重试和审核操作；返回可跟踪的任务 ID。",
+    "out": "Command ID · Run ID",
+    "items": [
+      "重发请求复用 command_id；主动再生成使用新命令。",
+      "API 与数据库在同一事务登记命令和待发布事件。",
+      "任务控制接口按状态版本检查，防止旧页面覆盖新状态。"
+    ]
+  },
+  {
+    "id": "orchestrator",
+    "x": 620,
+    "y": 400,
+    "kind": "control",
+    "n": "06",
+    "title": "任务编排与状态机",
+    "meta": "DAG / 持久化恢复",
+    "desc": "计算依赖、预算与下一步；管理执行租约和人工审核分支。",
+    "out": "StepRun · State Event",
+    "items": [
+      "依赖满足后才能排队；逻辑步骤可以并行，GPU执行需资源许可。",
+      "队列至少一次投递；消费者去重并核对已运行的外部任务。",
+      "取消、重试、恢复都有显式状态和事件。"
+    ]
+  },
+  {
+    "id": "events",
+    "x": 990,
+    "y": 400,
+    "kind": "control",
+    "n": "07",
+    "title": "事件总线与步骤追踪",
+    "meta": "Outbox / SSE / Trace",
+    "desc": "把 Agent、模型和工具的执行事实转成可回放的进度流。",
+    "out": "seq · step_id · artifacts",
+    "items": [
+      "数据库持久化事件，通过 Outbox 发布并去重。",
+      "SSE 断线补发；历史超出保留期则取快照。",
+      "使用 run_id、step_id、attempt_id 串联日志与产物。"
+    ]
+  },
+  {
+    "id": "decision",
+    "x": 1360,
+    "y": 400,
+    "kind": "decision",
+    "n": "08",
+    "title": "Jev / Laya 决策辅助",
+    "meta": "LOCAL DEFAULT / Laya",
+    "desc": "基于文本状态选择复用、工作流和修复路径；本地默认 Laya。",
+    "out": "DecisionAdvice · fallback",
+    "items": [
+      "规则先筛可行动作；小模型只在有限候选中建议。",
+      "中文优先验证多语言权重；领域校准后启用自动执行。",
+      "低置信或异常交给规则/Qwen；Jev 仅预留接口。"
+    ]
+  },
+  {
+    "id": "plan",
+    "x": 250,
+    "y": 730,
+    "kind": "create",
+    "n": "09",
+    "title": "编剧与分镜 Agent",
+    "meta": "Qwen / 文本规划",
+    "desc": "将主题和导入剧本变成场次、镜头、台词与验收标准。",
+    "out": "Script · ShotSpec[]",
+    "items": [
+      "结构化输出需要校验角色引用与动作时长。",
+      "复用已存在的项目资产与角色档案。",
+      "复杂推理请求进入大模型队列，不阻塞 Web API。"
+    ]
+  },
+  {
+    "id": "canvas",
+    "x": 620,
+    "y": 730,
+    "kind": "create",
+    "n": "10",
+    "title": "场景画布与连续性",
+    "meta": "角色 · 构图 · 状态",
+    "desc": "定义位置、视线、服装和前后镜头状态，形成可编辑的场景画布。",
+    "out": "SceneCanvas · Asset需求",
+    "items": [
+      "布局 DSL 与可视画布使用相同坐标和版本。",
+      "角色版本改变时标记依赖镜头待复核。",
+      "导入素材可直接拖入画布并绑定用途。"
+    ]
+  },
+  {
+    "id": "asset",
+    "x": 990,
+    "y": 730,
+    "kind": "create",
+    "n": "11",
+    "title": "素材解析与缺口生成",
+    "meta": "导入优先 / Qwen Image 2.1 7B",
+    "desc": "优先绑定已有素材；缺少角色、场景或关键帧时再调用生图。",
+    "out": "版本化资产 · source=import/generated",
+    "items": [
+      "原件、代理预览与生成衍生物分别登记。",
+      "导入视频可直接进入质检，不必重新生成。",
+      "图片或视频语义理解由 VLM 完成；Laya只读摘要。"
+    ]
+  },
+  {
+    "id": "prompt",
+    "x": 1360,
+    "y": 730,
+    "kind": "create",
+    "n": "12",
+    "title": "提示词优化与工作流编译",
+    "meta": "Qwen + 能力校验",
+    "desc": "优化镜头提示词；按素材与能力表编译冻结的 ComfyUI 工作流。",
+    "out": "RenderRequest · profile_id",
+    "items": [
+      "Laya 辅助选择已经验证的工作流和参数档位。",
+      "工作流编译器验证节点字段与模型输入能力。",
+      "视频直接复用时跳过提示词和渲染步骤。"
+    ]
+  },
+  {
+    "id": "queue",
+    "x": 250,
+    "y": 1060,
+    "kind": "execute",
+    "n": "13",
+    "title": "资源调度与执行队列",
+    "meta": "GB10 / GPU 租约",
+    "desc": "串行安排重型推理；检查缓存、优先级、加载开销和重试预算。",
+    "out": "Lease · ExecutionTicket",
+    "items": [
+      "Laya 先在 CPU 实测；GPU 常驻取决于端到端收益。",
+      "租约过期先确认旧进程终止，再允许新任务占用资源。",
+      "不同模型池是逻辑分工，不等于全部常驻。"
+    ]
+  },
+  {
+    "id": "render",
+    "x": 620,
+    "y": 1060,
+    "kind": "execute",
+    "n": "14",
+    "title": "本地视频生成",
+    "meta": "MiniMax H3 + ComfyUI",
+    "desc": "执行已验证的生成工作流；输出候选视频、真实进度与参数记录。",
+    "out": "VideoAsset · prompt_id",
+    "items": [
+      "仅在实机冒烟通过后登记生成模式能力。",
+      "低清样片和高质量出片是两个 Run，出片需再质检。",
+      "缓存命中复用产物，但要按当前规则重新验证有效性。"
+    ]
+  },
+  {
+    "id": "inspect",
+    "x": 990,
+    "y": 1060,
+    "kind": "execute",
+    "n": "15",
+    "title": "视频 / 音频质量评测",
+    "meta": "FFmpeg + 本地视觉理解模型",
+    "desc": "检查格式、角色、动作、稳定性和台词，生成带时间戳的证据。",
+    "out": "ScoreReport · Evidence",
+    "items": [
+      "导入视频与生成视频走相同的验收入口。",
+      "低成本规则先检查，再进行必要的视觉/音频检查。",
+      "小模型不能替代视频理解与最终质量验收。"
+    ]
+  },
+  {
+    "id": "gate",
+    "x": 1360,
+    "y": 1060,
+    "kind": "execute",
+    "n": "16",
+    "title": "质量门控与路由",
+    "meta": "规则 / 预算 / 不确定性",
+    "desc": "关键要求通过后接受；失败修复；超预算或不确定则进入人审。",
+    "out": "ACCEPTED / REPAIR / REVIEW",
+    "items": [
+      "质量决定由版本化规则执行。",
+      "Laya 可建议失败归因与策略，不能放宽硬性要求。",
+      "评分版本、素材版本与接受记录必须绑定。"
+    ]
+  },
+  {
+    "id": "repair",
+    "x": 250,
+    "y": 1430,
+    "kind": "deliver",
+    "n": "17",
+    "title": "差异化修复",
+    "meta": "Laya 建议 / Qwen 修复",
+    "desc": "从失败证据选择修复类型，生成新方案并回到受影响的阶段。",
+    "out": "RepairPlan · 新 attempt",
+    "items": [
+      "重做资产、改提示词和重规划分别回到对应起点。",
+      "自动修复上限与基础设施重试预算分开。",
+      "合格导入片段可替换失败镜头，并重新验收。"
+    ]
+  },
+  {
+    "id": "human",
+    "x": 620,
+    "y": 1430,
+    "kind": "deliver",
+    "n": "18",
+    "title": "人工复核与恢复",
+    "meta": "Web 审核工作台",
+    "desc": "比较候选和证据；修改素材或分镜，继续执行或显式人工接受。",
+    "out": "ReviewEvent → 编排器",
+    "items": [
+      "所有操作经业务 API 回到编排器。",
+      "人工豁免不伪装成模型自动评分通过。",
+      "项目继续运行时只重跑被修改内容的依赖。"
+    ]
+  },
+  {
+    "id": "edit",
+    "x": 990,
+    "y": 1430,
+    "kind": "deliver",
+    "n": "19",
+    "title": "剪辑与成片再验收",
+    "meta": "FFmpeg / 字幕 / 音轨",
+    "desc": "拼接接受的导入或生成片段，完成字幕、声音与连续性检查。",
+    "out": "EpisodeCandidate · FinalScore",
+    "items": [
+      "只选择每镜头 accepted_run_id。",
+      "高质量重渲染后的镜头必须重新接受。",
+      "成片失败时定位时间段和上游镜头。"
+    ]
+  },
+  {
+    "id": "export",
+    "x": 1360,
+    "y": 1430,
+    "kind": "deliver",
+    "n": "20",
+    "title": "交付与版本追溯",
+    "meta": "MP4 / 字幕 / 产物清单",
+    "desc": "导出验收后的成片，记录全部素材来源、版本与执行链路。",
+    "out": "MP4 · manifest.json",
+    "items": [
+      "视频源、参考图与声音素材都写入清单。",
+      "保留模型、工作流、seed和评分版本。",
+      "Web 提供下载与历史版本查询。"
+    ]
+  }
+];
+const container=document.getElementById("nodes");
+for(const n of nodes){
+ const button=document.createElement("button");
+ button.className="node "+(n.kind||"");button.style.left=n.x+"px";button.style.top=n.y+"px";button.id="node-"+n.id;button.setAttribute("aria-pressed","false");button.setAttribute("aria-controls","node-detail");
+ for(const [tag,cls,value] of [["span","meta",n.n+" / "+n.meta],["strong","",n.title],["span","desc",n.desc],["span","out","输出 · "+n.out]]){const el=document.createElement(tag);el.className=cls;el.textContent=value;button.appendChild(el);}
+ button.addEventListener("click",()=>select(n));container.appendChild(button);
+}
+function select(n){
+ document.querySelectorAll(".node").forEach(el=>el.setAttribute("aria-pressed",String(el.id==="node-"+n.id)));
+ document.getElementById("detail-tag").textContent=n.n+" / "+n.meta;
+ document.getElementById("detail-title").textContent=n.title;
+ document.getElementById("detail-description").textContent=n.desc;
+ document.getElementById("detail-output").textContent=n.out;
+ document.getElementById("detail-items").replaceChildren(...n.items.map(text=>{const li=document.createElement("li");li.textContent=text;return li;}));
+}
+select(nodes[0]);
+let zoom=1;
+const scroll=document.getElementById("map-scroll"),range=document.getElementById("horizontal-scroll");
+function sync(){const maxX=scroll.scrollWidth-scroll.clientWidth,maxY=scroll.scrollHeight-scroll.clientHeight;const x=maxX>0?Math.round(scroll.scrollLeft/maxX*100):0,y=maxY>0?Math.round(scroll.scrollTop/maxY*100):0;range.value=x*10;range.disabled=maxX<=0;document.getElementById("scroll-position").textContent="横向 "+x+"% · 纵向 "+y+"%";}
+function setZoom(next){const previous=zoom;zoom=Math.max(.6,Math.min(1.5,next));document.getElementById("map").style.transform="scale("+zoom+")";document.getElementById("map-size").style.width=1770*zoom+"px";document.getElementById("map-size").style.height=1940*zoom+"px";document.getElementById("zoom-value").textContent=Math.round(zoom*100)+"%";scroll.scrollLeft=scroll.scrollLeft*zoom/previous;scroll.scrollTop=scroll.scrollTop*zoom/previous;document.getElementById("zoom-out").disabled=zoom<=.6;document.getElementById("zoom-in").disabled=zoom>=1.5;sync();}
+document.getElementById("zoom-out").onclick=()=>setZoom(Number((zoom-.1).toFixed(1)));
+document.getElementById("zoom-in").onclick=()=>setZoom(Number((zoom+.1).toFixed(1)));
+document.getElementById("reset").onclick=()=>setZoom(1);
+document.getElementById("decision-jump").onclick=()=>{select(nodes.find(n=>n.id==="decision"));scroll.scrollTo({left:1300*zoom,top:350*zoom,behavior:"smooth"});};
+document.getElementById("origin").onclick=()=>scroll.scrollTo({top:0,left:0,behavior:"smooth"});
+range.addEventListener("input",()=>{scroll.scrollLeft=Number(range.value)/1000*(scroll.scrollWidth-scroll.clientWidth);});
+scroll.addEventListener("scroll",sync,{passive:true});window.addEventListener("resize",sync);sync();
+
+const demoInitial=[
+ {id:"sh01",title:"SH01 · 雨夜回头",subtitle:"导入角色图 → 生成视频",stage:2,imported:false,paused:false,decision:"Laya 建议（示例）：使用已导入角色图，选择图像条件工作流；规则检查已通过。",logs:["素材服务：绑定导入角色图 hero-v3 与雨夜场景。","提示词 Agent：完成 PromptSpec v2。","Laya：建议 image_conditioned；采用 profile_standard。","ComfyUI：采样步骤 16 / 30（示例值）。"]},
+ {id:"sh02",title:"SH02 · 城市空镜",subtitle:"导入视频 → 直接复用",stage:3,imported:true,paused:false,decision:"规则结果（示例）：已有待复用片段，跳过生成；Laya 仅建议复用策略，视频仍需质检。",logs:["素材服务：导入 city-night.mp4 并登记校验和。","媒体处理：裁剪 00:02–00:07，生成代理预览。","编排器：复用分支跳过提示词与 H3 生成。","视觉评测服务：正在核对场景与画面稳定性。"]},
+ {id:"sh03",title:"SH03 · 对话近景",subtitle:"身份漂移 → 第 2 次尝试",stage:1,imported:false,paused:false,decision:"Laya 建议（示例）：replace_reference；Qwen 根据证据重写输入。剩余 1 次自动修复预算。",logs:["质检：上次候选在 2.0–3.5 秒出现身份漂移。","修复 Agent：替换为已批准的近景角色图。","编排器：创建新的 attempt_id，保留上次候选。","提示词 Agent：正在生成修改后的 PromptSpec。"]}
+];
+let demoTasks=structuredClone(demoInitial),demoSelected=0;
+const demoPhases=["素材就绪","提示词编译","视频生成","质量评测","镜头接受"];
+const demoActors=["素材服务","Qwen · 提示词 Agent","MiniMax H3 · ComfyUI Worker","本地 VLM · 质量评测服务","规则引擎 · 结果登记"];
+const demoActions=["校验素材版本与用途绑定。","根据镜头目标、参考图与失败证据编译提示词。","执行视频采样；进度来自 ComfyUI 事件。","比较目标要求与视频片段，生成评分证据。","登记 accepted_run_id，允许下游合成使用。"];
+function demoRender(){
+ const task=demoTasks[demoSelected],list=document.getElementById("demo-tasks");list.replaceChildren();
+ demoTasks.forEach((t,i)=>{const b=document.createElement("button");b.className=i===demoSelected?"active":"";b.setAttribute("aria-pressed",String(i===demoSelected));const strong=document.createElement("strong");strong.textContent=t.title;const small=document.createElement("small");small.textContent=t.subtitle;b.append(strong,small);b.onclick=()=>{demoSelected=i;demoRender();};list.append(b);});
+ document.getElementById("demo-title").textContent=task.title;
+ document.getElementById("demo-status").textContent=task.stage===4?"已接受 · 示例":task.paused?"暂停调度 · 示例":"执行中 · 示例";
+ document.getElementById("demo-status").className="badge "+(task.stage===4?"green":task.paused?"amber":"");
+ const phases=document.getElementById("demo-phases");phases.replaceChildren();
+ demoPhases.forEach((text,i)=>{const el=document.createElement("div");const skipped=task.imported&&(i===1||i===2);el.className="phase "+(skipped?"":i<task.stage?"done":i===task.stage?"current":"");const small=document.createElement("span");small.textContent=skipped?"SKIPPED":i<task.stage?"DONE":i===task.stage?"CURRENT":"PENDING";el.append(small,document.createTextNode(text));phases.append(el);});
+ document.getElementById("demo-agent").textContent=demoActors[task.stage];
+ document.getElementById("demo-action").textContent=task.paused?"已请求暂停后续调度；此原型冻结在当前步骤。":demoActions[task.stage];
+ document.getElementById("demo-output").textContent="产物 / "+["AssetBinding v3","PromptSpec v2","候选视频 · 尚未验收","ScoreReport + Evidence","VideoAsset · accepted"][task.stage]+" ｜ 数据仅用于演示";
+ document.getElementById("demo-progress").style.width=(task.stage===4?100:(task.stage+0.5)/5*100)+"%";
+ document.getElementById("demo-decision").textContent=task.decision;
+ document.getElementById("demo-next").disabled=task.paused||task.stage===4;
+ document.getElementById("demo-pause").disabled=task.stage===4;
+ document.getElementById("demo-pause").textContent=task.paused?"模拟恢复调度":"模拟暂停调度";
+ const logs=document.getElementById("demo-log");logs.replaceChildren(...task.logs.map((text,i)=>{const li=document.createElement("li"),time=document.createElement("time"),body=document.createElement("span");time.textContent="#"+String(i+1).padStart(3,"0");body.textContent=text;li.append(time,body);return li;}));
+}
+document.getElementById("demo-next").onclick=()=>{const t=demoTasks[demoSelected];if(t.paused||t.stage===4)return;t.logs.push(demoActors[t.stage]+"：步骤完成。");t.stage++;t.logs.push(demoActors[t.stage]+"："+(t.stage===4?"规则验收通过，镜头已接受。":"开始执行下一步骤。"));demoRender();};
+document.getElementById("demo-pause").onclick=()=>{const t=demoTasks[demoSelected];t.paused=!t.paused;t.logs.push("用户命令："+(t.paused?"暂停后续调度。":"恢复后续调度。"));demoRender();};
+document.getElementById("demo-reset").onclick=()=>{demoTasks=structuredClone(demoInitial);demoSelected=0;demoRender();};
+demoRender();
+const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("active",a.hash==="#"+entry.target.id));}}},{rootMargin:"-10% 0px -65% 0px"});document.querySelectorAll("main>section").forEach(el=>observer.observe(el));
+
+</script>
+</body>
+</html>

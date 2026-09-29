@@ -1,0 +1,3 @@
+# Default local decision engine. Auto-installed by ComfyUI entrypoints that
+# pick up custom-node requirements.txt. Weights: see LAYA.md.
+laya>=0.3.5
